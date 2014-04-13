@@ -29,19 +29,19 @@ CREATE TABLE Game (
 );
 --Game table test values
 INSERT INTO Game
-	VALUES (null, 7, 0, 'Angry Birds',  'Rovio Entertainment Ltd', '31-May-2010', 'Save the angry birds!', 'www.angrybirds.com', 
+	VALUES (null, 7, 0, 'Angry Birds',  'Rovio Entertainment Ltd', '2010-03-09', 'Save the angry birds!', 'www.angrybirds.com', 
 		   1.0); --should fail: null gameid test (checking primary key default setup includes not null).
 INSERT INTO Game
-	VALUES (1, 7, 0, 'Angry Birds',  'Rovio Entertainment Ltd', '31-May-2010', 'Save the angry birds!', 'www.angrybirds.com', 
+	VALUES (1, 7, 0, 'Angry Birds',  'Rovio Entertainment Ltd', '2010-03-09', 'Save the angry birds!', 'www.angrybirds.com', 
 		   1.0);
 INSERT INTO Game
-	VALUES (2, 18, 0, 'XCOM: Enemy Unknown',  '2K Games', '04-June-2013', 'Threatened by an unknown enemy...', 'www.xcom.com', 
+	VALUES (2, 18, 0, 'XCOM: Enemy Unknown',  '2K Games', '2013-04-06', 'Threatened by an unknown enemy...', 'www.xcom.com', 
 		   1.6);
 INSERT INTO Game
-	VALUES (3, 18, 0, 'Infinity Blade',  'Chair Entertainment Group', '03-Feb-2012', '...', 
+	VALUES (3, 18, 0, 'Infinity Blade',  'Chair Entertainment Group', '2012-02-03', '...', 
 		   'www.infinity.com', 1.4);
 INSERT INTO Game
-	VALUES (4, 3, 0, 'Shark Dash',  'Gameloft', '03-Feb-2012', '...', 'www.sharkdash.com', 1.89);
+	VALUES (4, 3, 0, 'Shark Dash',  'Gameloft', '2012-02-03', '...', 'www.sharkdash.com', 1.89);
 
 
 /* Genre table generation code */
