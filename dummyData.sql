@@ -92,3 +92,31 @@ INSERT INTO UserToGame(UserName,GameID)
 INSERT INTO UserToGame(UserName,GameID)
 	VALUES('WillWoodhead',3
 );
+
+/* Dummy values for Achievement table */
+INSERT INTO Achievement
+	VALUES (1, 1, 'I wish I was a policeman!', 0, 0, 10, 'You stole 100 police cars', 'Steal 100 police cars');
+INSERT INTO Achievement
+	VALUES (2, 2, 'Up close and personal', 0, 0, 60, 'You killed 80 creatures with a melee weapon', 'Kill 80 creatures with a melee weapon');
+INSERT INTO Achievement
+	VALUES (3, 3, 'Penalty guru', 0, 0, 50, 'Won 50 games through penalties', 'Win 50 games through penalties');
+INSERT INTO Achievement
+	VALUES (4, 3, 'Fowler', 1, 0, 10, 'Received 5 red cards in a game', 'Get 5 yellow cards in a game');
+INSERT INTO Achievement
+	VALUES (5, 4, 'Score obsessed', 0, 0, 30, 'Achieved a score of 3000000', 'Achieve a score of 3000000');
+
+/* Dummy values for AchievementToUserToGame table */
+INSERT INTO AchievementToUserToGame
+	VALUES (1, 1, '2014-1-1');
+INSERT INTO AchievementToUserToGame
+	VALUES (4, 1, '2013-4-26');
+INSERT INTO AchievementToUserToGame
+	VALUES (5, 2, '2013-4-26');
+INSERT INTO AchievementToUserToGame
+	VALUES (3, 2, '2013-11-14');
+INSERT INTO AchievementToUserToGame
+	VALUES (1, 3, '2011-12-14');
+INSERT INTO AchievementToUserToGame
+	VALUES (4, 2, '2012-12-14');
+INSERT INTO AchievementToUserToGame
+	VALUES (2, 3, '2012-12-14');

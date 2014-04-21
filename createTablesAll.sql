@@ -1,8 +1,9 @@
+
 CREATE TABLE UserPublic(
 	UserName VARCHAR(20) NOT NULL,
 	Avatar VARCHAR(50) NOT NULL,
 	CreationDate DATE NOT NULL,
-	AccountStatus ENUM('Online','Offline') NOT NULL DEFAULT'Offline',
+	AccountStatus ENUM('Online','Offline', 'Locked') NOT NULL DEFAULT'Offline',
 	LastLogin TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	UserStatus VARCHAR(100) DEFAULT NULL,
 
@@ -123,4 +124,31 @@ CREATE TABLE UserToGame(
 	CONSTRAINT fk_U2G_GameID
 		FOREIGN KEY(GameID)
 		REFERENCES Game(GameID)
+);
+
+CREATE TABLE Achievement (
+	achievementID INT AUTO_INCREMENT,
+	gameID INT NOT NULL,
+	title VARCHAR(50) NOT NULL,
+	hiddenFlag BIT(1) NOT NULL DEFAULT 0, --achievements shown by default
+	icon INT DEFAULT 0,
+	pointValue INT NOT NULL DEFAULT 1,
+	postDescription VARCHAR(200),
+	preDescription VARCHAR(200),
+	CONSTRAINT pkAchievement
+		PRIMARY KEY (achievementID),
+	CONSTRAINT fkAchievToGame
+		FOREIGN KEY (GameID)
+		REFERENCES Game (GameID)
+);
+
+CREATE TABLE AchievementToUserToGame (
+	achievementID INT,
+	userToGameID INT,
+	dateGained DATE NOT NULL,
+	CONSTRAINT pkAchievUsrGame
+		PRIMARY KEY (userToGameID, achievementID),
+	CONSTRAINT fk
+		FOREIGN KEY (userToGameID)
+		REFERENCES UserToGame (ID)	
 );
