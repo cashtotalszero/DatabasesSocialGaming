@@ -58,6 +58,7 @@ CREATE TABLE Game(
 	AgeRating ENUM('3','7','12','16','18') NOT NULL,
 	DefaultImage VARCHAR(50) NOT NULL,
 	Name VARCHAR(30) NOT NULL,
+	AverageRating FLOAT DEFAULT NULL,
 	OverallRank INT UNIQUE NOT NULL AUTO_INCREMENT,
 	Publisher VARCHAR(20) NOT NULL,
 	ReleaseDate DATE NOT NULL,
@@ -113,7 +114,8 @@ CREATE TABLE UserToGame(
 	InMatch ENUM('Yes','No') NOT NULL DEFAULT'No',
 	HighestScore INT NOT NULL DEFAULT'0',
 	LastPlayDate DATE DEFAULT NULL,
-	Rating ENUM('Unrated','1','2','3','4','5') NOT NULL DEFAULT'Unrated',
+	UserRating FLOAT NOT NULL DEFAULT'0.0',
+	AgeRating ENUM('Unrated','1','2','3','4','5') NOT NULL DEFAULT'Unrated',
 	Comments VARCHAR(100) NOT NULL DEFAULT'No comments',
 
 	CONSTRAINT pkID

@@ -1,0 +1,26 @@
+/* 
+QUESTION 2: Automatically update a game’s average rating whenever a user adds 
+or updates their rating for that game
+*/
+
+delimiter //
+CREATE TRIGGER q2insert 
+	AFTER INSERT ON UserToGame
+BEGIN
+	UPDATE UserToGame
+	SET AverageRating=(
+		SELECT AVG(Rating)
+		FROM Game,UserPublic,UserToGame
+		WHERE 
+			UserPublic.UserName=NEW.UserName AND 
+			UserPublic.UserName=UserToGame.UserName AND 
+			Game.GameID=UserToGame.GameID)
+	WHERE UserName=New.UserName;
+END;//
+delimiter;
+	
+
+
+
+
+	
