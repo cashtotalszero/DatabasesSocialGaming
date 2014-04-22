@@ -8,7 +8,7 @@ NOTES:
   2) triggers.sql
   3) dummyData.sql
 
-QUESTION 1 : Query stored in question1.sql (AP)
+QUESTION 1 : Query stored in question1.sql (AP)\n
 QUESTION 2: This is 2 triggers. Both are currently stored in triggers.sql (AP)
 QUESTION 3: (WW)
 QUESTION 4:
