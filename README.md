@@ -3,6 +3,7 @@ DatabasesSocialGaming
 
 NOTES:
 - SQL is written to work with MySQL
+- Latest code can be found in WorkingSQL directory
 - Scripts must be run in the following order:
   1) createTablesAll.sql
   2) triggers.sql
