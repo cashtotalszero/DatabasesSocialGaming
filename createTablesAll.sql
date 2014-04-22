@@ -1,4 +1,4 @@
-
+/* User relations */
 CREATE TABLE UserPublic(
 	UserName VARCHAR(20) NOT NULL,
 	Avatar VARCHAR(50) NOT NULL,
@@ -53,6 +53,7 @@ CREATE TABLE Friends2(
 		REFERENCES UserPublic(UserName)
 );
 
+/* Game relations */
 CREATE TABLE Game(
 	GameID INT NOT NULL,
 	AgeRating ENUM('3','7','12','16','18') NOT NULL,
@@ -106,6 +107,7 @@ CREATE TABLE GameImage (
 		REFERENCES Game(GameID)
 );
 
+/* Linking relation for Users & Games */
 CREATE TABLE UserToGame(
 	ID INT NOT NULL AUTO_INCREMENT,
 	UserName VARCHAR(20) NOT NULL,
@@ -128,6 +130,7 @@ CREATE TABLE UserToGame(
 		REFERENCES Game(GameID)
 );
 
+/* Acheivement relations */
 CREATE TABLE Achievement (
 	achievementID INT AUTO_INCREMENT,
 	gameID INT NOT NULL,
@@ -144,6 +147,7 @@ CREATE TABLE Achievement (
 		REFERENCES Game (GameID)
 );
 
+/* Linking relation for Achievements, Users & Games */
 CREATE TABLE AchievementToUserToGame (
 	achievementID INT,
 	userToGameID INT,
