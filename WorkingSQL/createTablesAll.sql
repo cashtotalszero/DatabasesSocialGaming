@@ -169,15 +169,6 @@ CREATE TABLE LeaderboardToUserToGame(
 		REFERENCES Leaderboard(LeaderboardID)
 );
 
-
-CREATE TABLE HotList(
-	Ranking INT NOT NULL AUTO_INCREMENT,
-	GameID INT NOT NULL,
-	NOPLastWeek INT,
-	CONSTRAINT pkID
-		PRIMARY KEY(ranking)
-);
-
 /* Acheivement relations */
 CREATE TABLE Achievement (
 	achievementID INT AUTO_INCREMENT,

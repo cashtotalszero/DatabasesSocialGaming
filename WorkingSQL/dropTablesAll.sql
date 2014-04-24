@@ -1,6 +1,5 @@
 DROP TABLE AchievementToUserToGame;
 DROP TABLE Achievement;
-DROP TABLE Hotlist;
 DROP TABLE LeaderboardToUserToGame;
 DROP TABLE Plays;
 DROP TABLE Leaderboard;

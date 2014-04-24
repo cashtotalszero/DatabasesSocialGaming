@@ -67,14 +67,4 @@ BEGIN
 END $$
 DELIMITER ;
 
-/* Trigger to change average on INSERT */
-DELIMITER $$
-CREATE TRIGGER playCount_After_Insert After INSERT ON Plays
-FOR EACH ROW 
-BEGIN
-	DELETE FROM HotList;
-	INSERT INTO HotList (GameID, NOPLastWeek)
-	SELECT GameID, COUNT(GameID) FROM Plays WHERE Plays.TimeOfPlay > DATE(DATE_SUB(NOW(), INTERVAL 7 DAY))
-	GROUP BY GameID;
-END $$
-DELIMITER ;
+
