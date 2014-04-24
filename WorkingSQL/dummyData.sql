@@ -27,19 +27,16 @@ INSERT INTO UserPrivate
 /* GAME INFORMATION */
 
 /* Dummy values for Game */
-INSERT INTO Game 
-	VALUES(1,'18','./img.jpg','GTA V',NULL,NULL,'Rockstar','2013-1-01','A bloody mess','GTA.com',NULL
-);
-INSERT INTO Game 
-	VALUES(2,'18','./img.jpg','The Last of Us',NULL,NULL, 'Naughty Dog','2013-12-15','The best game ever','404.net',NULL
-);
-INSERT INTO Game 
-	VALUES(3,'3','./img.jpg','FIFA 14',NULL,NULL,'EA','2014-1-1','Football. Note: England suck','fifa.com',NULL
-);
+INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url)
+	VALUES('18','./img.jpg','GTA V','Rockstar','2013-1-01','A bloody mess','GTA.com');
+INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url)
+	VALUES('18','./img.jpg','The Last of Us', 'Naughty Dog','2013-12-15','The best game ever','404.net');
+INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url)
+	VALUES('3','./img.jpg','FIFA 14','EA','2014-1-1','Football. Note: England suck','fifa.com');
+INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url)
+	VALUES ('7','./img.jpg','Angry Birds','Rovio','2010-03-09','Save the angry birds!','www.angrybirds.com');
 
-INSERT INTO Game
-	VALUES (4,'7','./img.jpg','Angry Birds',NULL,NULL,'Rovio','2010-03-09','Save the angry birds!','www.angrybirds.com',1.0
-); 
+
 
 /* Dummy values for Genre */
 INSERT INTO Genre 
@@ -78,20 +75,19 @@ INSERT INTO GameToGenre(GameID,GenreID)
 /* USER/GAME LINKING RELATION */
 
 INSERT INTO UserToGame(UserName,GameID,UserRating)
-	VALUES('AlexParrott',2,1
-);
+	VALUES('AlexParrott',2,1);
+
 INSERT INTO UserToGame(UserName,GameID,UserRating)
-	VALUES('AlexParrott',1,3
-);
+	VALUES('AlexParrott',1,3);
+
 INSERT INTO UserToGame(UserName,GameID,UserRating)
-	VALUES('JamesHamblion',1,10
-);
+	VALUES('JamesHamblion',1,10);
+
 INSERT INTO UserToGame(UserName,GameID,UserRating)
-	VALUES('JamesHamblion',4,55.9
-);
+	VALUES('JamesHamblion',4,55.9);
+
 INSERT INTO UserToGame(UserName,GameID,UserRating)
-	VALUES('WillWoodhead',3,2.5
-);
+	VALUES('WillWoodhead',3,2.5);
 
 /* Dummy values for Achievement table */
 INSERT INTO Achievement
