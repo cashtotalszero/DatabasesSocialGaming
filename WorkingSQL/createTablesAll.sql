@@ -116,6 +116,7 @@ CREATE TABLE UserToGame(
 	GameInProgress ENUM('Yes','No') NOT NULL DEFAULT'No',
 	InMatch ENUM('Yes','No') NOT NULL DEFAULT'No',
 	HighestScore INT NOT NULL DEFAULT'0',
+	LastScore INT DEFAULT '0',
 	LastPlayDate DATE DEFAULT NULL,
 	UserRating FLOAT NOT NULL DEFAULT'0.0',
 	AgeRating ENUM('Unrated','1','2','3','4','5') NOT NULL DEFAULT'Unrated',
