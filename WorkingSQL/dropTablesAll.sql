@@ -1,5 +1,3 @@
---Drop all tables in correct order
-
 DROP TABLE AchievementToUserToGame;
 DROP TABLE Achievement;
 DROP TABLE Hotlist;
