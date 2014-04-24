@@ -116,3 +116,26 @@ INSERT INTO AchievementToUserToGame
 	VALUES (4, 2, '2012-12-14');
 INSERT INTO AchievementToUserToGame
 	VALUES (2, 3, '2012-12-14');
+
+UPDATE UserToGame
+SET GameInProgress='yes'
+WHERE ID=1;
+
+UPDATE UserToGame
+SET GameInProgress='yes'
+WHERE ID=2;
+
+UPDATE UserToGame
+SET GameInProgress='yes'
+WHERE ID=1;
+
+UPDATE UserToGame
+SET LastScore=18
+WHERE ID=3;
+
+UPDATE Leaderboard
+SET SortOrder='desc'
+WHERE LeaderboardID=1;
+
+
+
