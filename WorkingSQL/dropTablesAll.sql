@@ -13,8 +13,3 @@ DROP TABLE Friends2;
 DROP TABLE Friends;
 DROP TABLE UserPrivate;
 DROP TABLE UserPublic;
-
-
-
-
-

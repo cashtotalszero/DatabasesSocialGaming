@@ -1,11 +1,12 @@
 
 SET @row:=0;
 SET @prev:=null;
-select name, AverageRating
+select genre, name, AverageRating
 from
 (
   SELECT 
-  Genre.Name AS name,
+  Genre.Name AS genre,
+  Game.Name AS name,
   AverageRating,
   @row:= if(@prev=Genre.Name, @row + 1, 1) as row_number,       
   @prev:= Genre.Name
@@ -14,5 +15,5 @@ from
 ) 
 AS src
 where row_number <= 10
-order by name, AverageRating desc;
+order by genre, AverageRating desc;
 
