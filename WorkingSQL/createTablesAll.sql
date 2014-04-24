@@ -53,6 +53,7 @@ CREATE TABLE Friends2(
 		REFERENCES UserPublic(UserName)
 );
 
+
 /* Game relations */
 CREATE TABLE Game(
 	GameID INT NOT NULL,
@@ -130,6 +131,49 @@ CREATE TABLE UserToGame(
 	CONSTRAINT fk_U2G_GameID
 		FOREIGN KEY(GameID)
 		REFERENCES Game(GameID)
+);
+
+CREATE TABLE Leaderboard(
+	LeaderboardID INT NOT NULL AUTO_INCREMENT,
+	GameID INT NOT NULL,
+	SortOrder ENUM('asc','desc') NOT NULL DEFAULT 'desc',
+	CONSTRAINT pkLdbdID
+		PRIMARY KEY (LeaderboardID),
+	CONSTRAINT fk_ldbd_GameID
+		FOREIGN KEY(GameID)
+		REFERENCES Game(GameID)
+);
+
+CREATE TABLE Plays(
+	GameID INT NOT NULL,
+	UserName VARCHAR(20) NOT NULL,
+	TimeOfPlay TIMESTAMP,
+	CONSTRAINT pkNoOfPlaysID
+		PRIMARY KEY(GameId, UserName, TimeOfPlay)
+);
+
+CREATE TABLE LeaderboardToUserToGame(
+	LeaderboardID INT NOT NULL,
+	UserToGameID INT NOT NULL,
+	Score INT NOT NULL,
+	TimeOfScore TIMESTAMP NOT NULL,
+	CONSTRAINT pk_LTUTG
+		PRIMARY KEY (TimeOfScore, UserToGameID),
+	CONSTRAINT fk_UTG
+		FOREIGN KEY (UserToGameID)
+		REFERENCES UserToGame(ID),
+	CONSTRAINT fk_Leaderboard
+		FOREIGN KEY (LeaderboardID)
+		REFERENCES Leaderboard(LeaderboardID)
+);
+
+
+CREATE TABLE HotList(
+	Ranking INT NOT NULL AUTO_INCREMENT,
+	GameID INT NOT NULL,
+	NOPLastWeek INT,
+	CONSTRAINT pkID
+		PRIMARY KEY(ranking)
 );
 
 /* Acheivement relations */

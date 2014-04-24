@@ -1,4 +1,7 @@
 --Drop all tables in correct order
+DROP TABLE LeaderboardToUserToGame;
+DROP TABLE Plays;
+DROP TABLE Leaderboard;
 DROP TABLE UserToGame;
 DROP TABLE GameToGenre;
 DROP TABLE Genre;
