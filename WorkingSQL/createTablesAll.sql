@@ -137,6 +137,8 @@ CREATE TABLE Leaderboard(
 	LeaderboardID INT NOT NULL AUTO_INCREMENT,
 	GameID INT NOT NULL,
 	SortOrder ENUM('asc','desc') NOT NULL DEFAULT 'desc',
+	TimePeriod ENUM('forever', '1_year', '1_week', '1_day') NOT NULL DEFAULT 'forever',
+	IsDefault BOOLEAN NOT NULL DEFAULT 0,
 	CONSTRAINT pkLdbdID
 		PRIMARY KEY (LeaderboardID),
 	CONSTRAINT fk_ldbd_GameID

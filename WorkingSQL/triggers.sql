@@ -7,8 +7,8 @@ DELIMITER $$
 CREATE TRIGGER Game_after_insert AFTER INSERT ON Game
 FOR EACH ROW
 BEGIN 
-	INSERT INTO Leaderboard (GameID)
-	VALUES ((SELECT GameID FROM Game WHERE Game.GameID = NEW.GameID));
+	INSERT INTO Leaderboard (GameID, IsDefault)
+	VALUES ((SELECT GameID FROM Game WHERE Game.GameID = NEW.GameID), 1);
 END $$
 DELIMITER ;
 
