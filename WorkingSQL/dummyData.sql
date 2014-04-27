@@ -97,25 +97,29 @@ INSERT INTO Achievement
 INSERT INTO Achievement
 	VALUES (3, 3, 'Penalty guru', 0, 0, 50, 'Won 50 games through penalties', 'Win 50 games through penalties');
 INSERT INTO Achievement
-	VALUES (4, 3, 'Fowler', 1, 0, 10, 'Received 5 red cards in a game', 'Get 5 yellow cards in a game');
+	VALUES (4, 3, 'Fowler', 1, 0, 10, 'Received 5 red cards in a game', 'Get 5 red cards in a game');
 INSERT INTO Achievement
 	VALUES (5, 4, 'Score obsessed', 0, 0, 30, 'Achieved a score of 3000000', 'Achieve a score of 3000000');
+INSERT INTO Achievement
+	VALUES (6, 3, 'Always Friendly', 0, 0, 20, 'Crossed for a Friend to score', 'Cross for a Friend to score');
+INSERT INTO Achievement
+	VALUES (7, 3, 'Goalie Scorer', 0, 0, 20, 'Scored with your goal keeper', 'Score with your goal keeper');
+INSERT INTO Achievement
+	VALUES (8, 3, 'Post and in', 1, 0, 20, 'Scored off the post or cross bar in a match', 'Score off the post or cross bar in a match');
 
 /* Dummy values for AchievementToUserToGame table */
 INSERT INTO AchievementToUserToGame
-	VALUES (1, 1, '2014-1-1');
+	VALUES (1, 2, '2014-1-1');
 INSERT INTO AchievementToUserToGame
-	VALUES (4, 1, '2013-4-26');
+	VALUES (2, 1, '2013-4-26');
 INSERT INTO AchievementToUserToGame
-	VALUES (5, 2, '2013-4-26');
+	VALUES (4, 5, '2013-4-26');
 INSERT INTO AchievementToUserToGame
-	VALUES (3, 2, '2013-11-14');
+	VALUES (5, 4, '2013-11-14');
 INSERT INTO AchievementToUserToGame
-	VALUES (1, 3, '2011-12-14');
+	VALUES (6, 5, '2013-12-13');
 INSERT INTO AchievementToUserToGame
-	VALUES (4, 2, '2012-12-14');
-INSERT INTO AchievementToUserToGame
-	VALUES (2, 3, '2012-12-14');
+	VALUES (7, 5, '2014-02-12');
 
 UPDATE UserToGame
 SET GameInProgress='yes'

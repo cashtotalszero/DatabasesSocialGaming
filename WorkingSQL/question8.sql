@@ -21,7 +21,7 @@ BEGIN
 	SET @usrname = NEW.userName;
 	SET @obscene = isUserNameRude(@usrname);
 	IF @obscene THEN
-		SET NEW.AccountStatus := 'Offline';
+		SET NEW.AccountStatus := 'Locked';
 	END IF;
 END;--//
 --delimiter ;
@@ -61,3 +61,8 @@ BEGIN
 	RETURN obscene;
 END;--//
 --delimiter ;
+
+--Test to check implementation is correct
+INSERT INTO UserPublic
+	VALUES('KsHiTer','./avatar.jpg',CURDATE(),'Online',NULL,'I am logged in!'
+);
