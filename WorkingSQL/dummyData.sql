@@ -40,14 +40,14 @@ INSERT INTO UserPrivate
 /* GAME INFORMATION */
 
 /* Dummy values for Game */
-INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url)
-	VALUES('18','./img.jpg','GTA V','Rockstar','2013-1-01','A bloody mess','GTA.com');
-INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url)
-	VALUES('18','./img.jpg','The Last of Us', 'Naughty Dog','2013-12-15','The best game ever','404.net');
-INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url)
-	VALUES('3','./img.jpg','FIFA 14','EA','2014-1-1','Football. Note: England suck','fifa.com');
-INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url)
-	VALUES ('7','./img.jpg','Angry Birds','Rovio','2010-03-09','Save the angry birds!','www.angrybirds.com');
+INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url, MaxScore, MinScore)
+	VALUES('18','./img.jpg','GTA V','Rockstar','2013-1-01','A bloody mess','GTA.com',10,1);
+INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url,MaxScore, MinScore)
+	VALUES('18','./img.jpg','The Last of Us', 'Naughty Dog','2013-12-15','The best game ever','404.net',100,50);
+INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url,MaxScore, MinScore)
+	VALUES('3','./img.jpg','FIFA 14','EA','2014-1-1','Football. Note: England suck','fifa.com', 1000,0);
+INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url, MaxScore)
+	VALUES ('7','./img.jpg','Angry Birds','Rovio','2010-03-09','Save the angry birds!','www.angrybirds.com',17);
 
 
 
@@ -87,8 +87,8 @@ INSERT INTO GameToGenre(GameID,GenreID)
 
 /* USER/GAME LINKING RELATION */
 
-INSERT INTO UserToGame(UserName,GameID,UserRating)
-	VALUES('AlexParrott',2,1);
+INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore)
+	VALUES('AlexParrott',2,1,49);
 
 INSERT INTO UserToGame(UserName,GameID,UserRating)
 	VALUES('AlexParrott',1,3);
@@ -96,8 +96,8 @@ INSERT INTO UserToGame(UserName,GameID,UserRating)
 INSERT INTO UserToGame(UserName,GameID,UserRating)
 	VALUES('JamesHamblion',1,10);
 
-INSERT INTO UserToGame(UserName,GameID,UserRating)
-	VALUES('JamesHamblion',4,55.9);
+INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore)
+	VALUES('JamesHamblion',4,55.9,18);
 
 INSERT INTO UserToGame(UserName,GameID,UserRating)
 	VALUES('WillWoodhead',3,2.5);

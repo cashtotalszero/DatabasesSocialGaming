@@ -1,7 +1,8 @@
 
 /* Triggers AFTER INSERT Game */
 DELIMITER $$
-CREATE TRIGGER Game_after_insert AFTER INSERT ON Game
+CREATE TRIGGER Game_after_insert 
+AFTER INSERT ON Game
 FOR EACH ROW
 BEGIN 
 	INSERT INTO Leaderboard (GameID, IsDefault)
@@ -9,9 +10,71 @@ BEGIN
 END $$
 DELIMITER ;
 
+/* BEFORE TRIGGERS */
+
+/* Triggers BEFORE INSERT to UserToGame */
+DELIMITER $$
+CREATE TRIGGER checkScoreInsert 
+BEFORE INSERT ON UserToGame
+FOR EACH ROW 
+BEGIN
+	/* Get max and min scores for the updated Game */
+	SET @minimum = (
+		SELECT MinScore 
+		FROM Game
+		WHERE Game.GameID = NEW.GameID);
+	SET @maximum = (
+		SELECT MaxScore 
+		FROM Game
+		WHERE Game.GameID = NEW.GameID);
+	
+	/* AP: If new score is < minScore or > maxScore, set to the minScore (q6). 
+	NOTE: If no minScore is provided, it defaults to NULL. Therefore, cheaters
+	will get no score! */
+	IF(
+		NEW.LastScore < @minimum
+		OR 
+		NEW.LastScore > @maximum
+	) 
+	THEN
+		SET NEW.LastScore = @minimum;
+	END IF;
+END $$
+DELIMITER ;
+
+/* Triggers BEFORE UPDATE to UserToGame */
+
+DELIMITER $$
+CREATE TRIGGER checkScoreUpdate 
+BEFORE UPDATE ON UserToGame
+FOR EACH ROW 
+BEGIN
+	/* NOTE: This code is identical to checkScoreInsert but triggers for UPDATES */
+	SET @minimum = (
+		SELECT MinScore 
+		FROM Game
+		WHERE Game.GameID = NEW.GameID);
+	SET @maximum = (
+		SELECT MaxScore 
+		FROM Game
+		WHERE Game.GameID = NEW.GameID);
+	IF(
+		NEW.LastScore < @minimum
+		OR 
+		NEW.LastScore > @maximum
+	) 
+	THEN
+		SET NEW.LastScore = @minimum;
+	END IF;	
+END $$
+DELIMITER ;
+
+/* AFTER TRIGGERS */
+
 /* Triggers AFTER INSERT to UserToGame */
 DELIMITER $$
-CREATE TRIGGER AvgOnInsert AFTER INSERT ON UserToGame
+CREATE TRIGGER AvgOnInsert 
+AFTER INSERT ON UserToGame
 FOR EACH ROW 
 BEGIN
 	/* AP: Updates AverageRating if there are 10+ ratings (q2 & q3) */ 
@@ -38,10 +101,10 @@ BEGIN
 END $$
 DELIMITER ; 
 
-
 /* Triggers AFTER UPDATE on UserToGame */
 DELIMITER $$
-CREATE TRIGGER AvgOnUpdate AFTER UPDATE ON UserToGame
+CREATE TRIGGER AvgOnUpdate 
+AFTER UPDATE ON UserToGame
 FOR EACH ROW 
 BEGIN
 	/* AP: Updates AverageRating if there are 10+ ratings (q2 & q3) */ 
@@ -55,7 +118,7 @@ BEGIN
 		WHERE Game.GameID = NEW.GameID;
 
 		/* AP: If new rating count is over 10, update the average */
-		IF (SELECT NoOfRatings FROM Game WHERE GameID=NEW.GameID) >= 10 
+		IF (SELECT NoOfRatings FROM Game WHERE GameID = NEW.GameID) >= 10 
 		THEN BEGIN
 			UPDATE Game
 				SET AverageRating = (
@@ -91,10 +154,10 @@ BEGIN
 END $$
 DELIMITER ; 
 	
-
 /* Triggers AFTER DELETE on UserToGame */
 DELIMITER $$
-CREATE TRIGGER AvgOnDelete AFTER DELETE ON UserToGame
+CREATE TRIGGER AvgOnDelete 
+AFTER DELETE ON UserToGame
 FOR EACH ROW 
 BEGIN
 	/* AP: Updates AverageRating if there are 10+ ratings (q2 & q3) */ 
@@ -120,7 +183,7 @@ BEGIN
 		END; END IF;
 
 		/* AP : If number of ratings drops below 10, set average to NULL */
-		IF (SELECT NoOfRatings FROM Game WHERE GameID=OLD.GameID) < 10 
+		IF (SELECT NoOfRatings FROM Game WHERE GameID = OLD.GameID) < 10 
 		THEN BEGIN
 			UPDATE Game
 				SET AverageRating = NULL
