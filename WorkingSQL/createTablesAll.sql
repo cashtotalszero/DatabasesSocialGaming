@@ -31,14 +31,14 @@ CREATE TABLE Friends(
 
 	CONSTRAINT pkFriends
 		PRIMARY KEY(AccHolder,Friend),
-	CONSTRAINT fkUser1
+	CONSTRAINT fkUser
 		FOREIGN Key(AccHolder)
 		REFERENCES UserPublic(UserName),
 	CONSTRAINT fkUser2
 		FOREIGN Key(Friend)
 		REFERENCES UserPublic(UserName)
 );
-
+/*
 CREATE TABLE Friends2(
 	AccHolder VARCHAR(20) NOT NULL,
 	Friend VARCHAR(20) NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE Friends2(
 		FOREIGN Key(Friend)
 		REFERENCES UserPublic(UserName)
 );
-
+*/
 
 /* Game relations */
 CREATE TABLE Game(
