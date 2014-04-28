@@ -10,12 +10,6 @@ INSERT INTO UserPublic
 INSERT INTO UserPublic 
 	VALUES('WillWoodhead','./avatar2.jpg',CURDATE(),'Online',NULL,'I am also logged in'
 );
-INSERT INTO UserPublic 
-	VALUES('ScarlettJo','./avatar2.jpg',CURDATE(),'Online',NULL,'I am also logged in'
-);
-INSERT INTO UserPublic 
-	VALUES('AliceInWonderland','./avatar.jpg',CURDATE(),'Online',NULL,'I am also logged in'
-);
 
 /* Dummy values for UserPrivate */
 INSERT INTO UserPrivate 
@@ -27,13 +21,6 @@ INSERT INTO UserPrivate
 INSERT INTO UserPrivate 
 	VALUES('WillWoodhead','password','Will','Woodhead','Will@Woodhead.com'
 );
-INSERT INTO UserPrivate 
-	VALUES('ScarlettJo','???','Scarlett','Johansson','Scarlett@Hollywoodbabes.com'
-);
-INSERT INTO UserPrivate 
-	VALUES('AliceInWonderland','maaaaaad75','Alice','Alice','Alice@Wonderland.com'
-);
-
 
 /* FRIENDS DUMMY DATA TO BE ADDED ONCE TRIGGER IS FINAL */
 
@@ -101,12 +88,6 @@ INSERT INTO UserToGame(UserName,GameID,UserRating)
 
 INSERT INTO UserToGame(UserName,GameID,UserRating)
 	VALUES('WillWoodhead',3,2.5);
-
-INSERT INTO UserToGame(UserName,GameID,UserRating)
-	VALUES('ScarlettJo',1,2.5);
-
-INSERT INTO UserToGame(UserName,GameID,UserRating)
-	VALUES('AliceInWonderland',3,5.5);
 
 /* Dummy values for Achievement table */
 INSERT INTO Achievement
