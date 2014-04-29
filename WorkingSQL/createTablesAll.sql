@@ -30,7 +30,7 @@ CREATE TABLE Friends(
 	Friend VARCHAR(20) NOT NULL,
 
 	CONSTRAINT pkFriends
-		PRIMARY KEY(AccHolder,Friend),
+		PRIMARY KEY(AccHolder, Friend),
 	CONSTRAINT fkUser
 		FOREIGN Key(AccHolder)
 		REFERENCES UserPublic(UserName),
@@ -64,6 +64,7 @@ CREATE TABLE Game(
 	NoOfRatings INT DEFAULT NULL,
 	OverallRank INT UNIQUE DEFAULT NULL,
 	Publisher VARCHAR(20) NOT NULL,
+	ScoreFormat VARCHAR(20) NOT NULL DEFAULT 'points',
 	ReleaseDate DATE NOT NULL,
 	TextDescription VARCHAR(50)NOT NULL,
 	Url VARCHAR(100) DEFAULT NULL,

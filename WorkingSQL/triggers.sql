@@ -5,6 +5,7 @@ CREATE TRIGGER Game_after_insert
 AFTER INSERT ON Game
 FOR EACH ROW
 BEGIN 
+	/*Create a default leaderboard at the creation of any new game */
 	INSERT INTO Leaderboard (GameID, IsDefault)
 	VALUES ((SELECT GameID FROM Game WHERE Game.GameID = NEW.GameID), 1);
 END $$
@@ -129,7 +130,8 @@ BEGIN
 				WHERE Game.GameID = NEW.GameID;
 		END;END IF;
 
-		/* WW */
+		/* WW  when a user starts playing a game, this 'play' is logged in the PLays table
+		This plays table is queried to find out the Hotlist */
 		IF NEW.GameInProgress = 'yes' AND OLD.GameInProgress = 'no' THEN BEGIN
 		INSERT INTO Plays (GameID, UserName, TimeOfPlay)
 		Values (
@@ -142,6 +144,9 @@ BEGIN
 			NOW());
 		END; END IF;
 
+		/* WW when a user gets a new score in any game, it is recorded in the lastScore attribute in UserToGame table
+			This score is also logged in LeaderboardToUserToGame. THis table holds the record of every score on every game
+			at a certain time. This table can therefore be used to create all of the leaderboards for any game.*/
 		IF NEW.LastScore != OLD.LastScore THEN BEGIN 
 			INSERT INTO LeaderboardToUserToGame (LeaderboardID, UserToGameID, Score, TimeOfScore)
 			VALUES(
