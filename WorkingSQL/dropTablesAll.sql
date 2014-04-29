@@ -1,3 +1,6 @@
+DROP TABLE MatchRequest;
+DROP TABLE MatchToUserToGame;
+DROP TABLE Matches;
 DROP TABLE AchievementToUserToGame;
 DROP TABLE Achievement;
 DROP TABLE Scores;

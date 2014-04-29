@@ -199,3 +199,46 @@ CREATE TABLE AchievementToUserToGame (
 		FOREIGN KEY (userToGameID)
 		REFERENCES UserToGame (ID)	
 );
+
+CREATE TABLE Matches (
+	MatchID INT AUTO_INCREMENT,
+	MatchName VARCHAR(30) NOT NULL,
+	Initiator INT NOT NULL,
+	MinPlayers INT NOT NULL DEFAULT 2,
+	MaxPlayers INT NOT NULL DEFAULT 2,
+	CONSTRAINT pkMatch
+		PRIMARY KEY (MatchID),
+	CONSTRAINT fkmatch1
+		FOREIGN KEY (Initiator)
+		REFERENCES UserToGame(ID)
+);
+
+
+CREATE TABLE MatchToUserToGame(
+	MatchID INT NOT NULL,
+	UserToGameID INT NOT NULL,
+	CONSTRAINT pkMatchToUserToGame
+		PRIMARY KEY (MatchID, UserToGameID),
+	CONSTRAINT fkMTUTG1
+		FOREIGN KEY (MatchID)
+		REFERENCES Matches(MatchID),
+	CONSTRAINT fkmtutg2
+		FOREIGN KEY (UserToGameID)
+		REFERENCES UserToGame(ID)
+);
+
+CREATE TABLE MatchRequest (
+	MatchRequestID INT AUTO_INCREMENT,
+	SendingUTG INT NOT NULL,
+	ReceivingUTG INT NOT NULL,
+	MatchID INT NOT NULL,
+	Pending BOOLEAN NOT NULL DEFAULT 1,
+	CONSTRAINT pkmatchrequest
+		PRIMARY KEY (MatchRequestID),
+	CONSTRAINT fkmatchrequest
+		FOREIGN KEY (SendingUTG)
+		REFERENCES UserToGame(ID),
+	CONSTRAINT fkmatchrequest2
+		FOREIGN KEY (ReceivingUTG)
+		REFERENCES UserToGame(ID)
+);
