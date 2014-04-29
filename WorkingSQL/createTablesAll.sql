@@ -65,6 +65,7 @@ CREATE TABLE Game(
 	OverallRank INT UNIQUE DEFAULT NULL,
 	Publisher VARCHAR(20) NOT NULL,
 	ScoreFormat VARCHAR(20) NOT NULL DEFAULT 'points',
+	SortOrder ENUM('asc','desc') NOT NULL DEFAULT 'desc',
 	ReleaseDate DATE NOT NULL,
 	TextDescription VARCHAR(50)NOT NULL,
 	Url VARCHAR(100) DEFAULT NULL,

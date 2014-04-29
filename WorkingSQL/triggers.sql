@@ -6,8 +6,8 @@ AFTER INSERT ON Game
 FOR EACH ROW
 BEGIN 
 	/*Create a default leaderboard at the creation of any new game */
-	INSERT INTO Leaderboard (GameID, IsDefault)
-	VALUES ((SELECT GameID FROM Game WHERE Game.GameID = NEW.GameID), 1);
+	INSERT INTO Leaderboard (GameID, IsDefault, SortOrder)
+	VALUES ((SELECT GameID FROM Game WHERE Game.GameID = NEW.GameID), 1, (SELECT SortOrder FROM Game WHERE Game.GameID = NEW.GameID));
 END $$
 DELIMITER ;
 
@@ -128,7 +128,7 @@ BEGIN
 					WHERE UserToGame.GameID = Game.GameID
 					AND UserToGame.GameID = NEW.GameID)
 				WHERE Game.GameID = NEW.GameID;
-		END;END IF;
+		END; END IF;
 
 		/* WW  when a user starts playing a game, this 'play' is logged in the PLays table
 		This plays table is queried to find out the Hotlist */
