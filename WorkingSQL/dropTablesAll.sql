@@ -10,6 +10,7 @@ DROP TABLE UserToGame;
 DROP TABLE GameImage;
 DROP TABLE GameToGenre;
 DROP TABLE Genre;
+DROP TABLE FriendRequest;
 DROP TABLE Game;
 DROP TABLE Friends2;
 DROP TABLE Friends;

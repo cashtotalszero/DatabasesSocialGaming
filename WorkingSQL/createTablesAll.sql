@@ -16,7 +16,7 @@ CREATE TABLE UserPrivate(
 	Password VARCHAR(20) NOT NULL,
 	FirstName VARCHAR(20) NOT NULL,
 	LastName VARCHAR(20) NOT NULL,
-	Email VARCHAR(30) NOT NULL,
+	Email VARCHAR(30) NOT NULL UNIQUE,
 
 	CONSTRAINT pkUserName
 		PRIMARY KEY(UserName),
@@ -24,35 +24,6 @@ CREATE TABLE UserPrivate(
 		FOREIGN Key(UserName)
 		REFERENCES UserPublic(UserName)
 );
-
-CREATE TABLE Friends(
-	AccHolder VARCHAR(20) NOT NULL,
-	Friend VARCHAR(20) NOT NULL,
-
-	CONSTRAINT pkFriends
-		PRIMARY KEY(AccHolder, Friend),
-	CONSTRAINT fkUser
-		FOREIGN Key(AccHolder)
-		REFERENCES UserPublic(UserName),
-	CONSTRAINT fkUser2
-		FOREIGN Key(Friend)
-		REFERENCES UserPublic(UserName)
-);
-
-CREATE TABLE Friends2(
-	AccHolder VARCHAR(20) NOT NULL,
-	Friend VARCHAR(20) NOT NULL,
-
-	CONSTRAINT pkFriends2
-		PRIMARY KEY(AccHolder,Friend),
-	CONSTRAINT fkUser1_1
-		FOREIGN Key(AccHolder)
-		REFERENCES UserPublic(UserName),
-	CONSTRAINT fkUser2_1
-		FOREIGN Key(Friend)
-		REFERENCES UserPublic(UserName)
-);
-
 
 /* Game relations */
 CREATE TABLE Game(
@@ -137,6 +108,61 @@ CREATE TABLE UserToGame(
 		REFERENCES Game(GameID)
 );
 
+/* Friendship Relations */ 
+CREATE TABLE Friends(
+	AccHolder VARCHAR(20) NOT NULL,
+	Friend VARCHAR(20) NOT NULL,
+
+	CONSTRAINT pkFriends
+		PRIMARY KEY(AccHolder, Friend),
+	CONSTRAINT fkUser
+		FOREIGN Key(AccHolder)
+		REFERENCES UserPublic(UserName),
+	CONSTRAINT fkUser2
+		FOREIGN Key(Friend)
+		REFERENCES UserPublic(UserName)
+);
+
+CREATE TABLE Friends2(
+	AccHolder VARCHAR(20) NOT NULL,
+	Friend VARCHAR(20) NOT NULL,
+
+	CONSTRAINT pkFriends2
+		PRIMARY KEY(AccHolder,Friend),
+	CONSTRAINT fkUser1_1
+		FOREIGN Key(AccHolder)
+		REFERENCES UserPublic(UserName),
+	CONSTRAINT fkUser2_1
+		FOREIGN Key(Friend)
+		REFERENCES UserPublic(UserName)
+);
+
+CREATE TABLE FriendRequest(
+	RequestID INT NOT NULL AUTO_INCREMENT,
+	Requester VARCHAR(20) NOT NULL,
+	Requestee VARCHAR(20) DEFAULT NULL,
+	Email VARCHAR(30) DEFAULT NULL,
+	FriendResponse ENUM('Accepted','Denied', 'Pending') NOT NULL DEFAULT'Pending',
+	GameInvite INT DEFAULT NULL,
+	InviteResponse ENUM('Accepted','Denied', 'Pending') NOT NULL DEFAULT'Pending',
+	
+	CONSTRAINT pkFriendReq
+		PRIMARY KEY(RequestID),
+	CONSTRAINT fkRequester
+		FOREIGN Key(Requester)
+		REFERENCES UserPrivate(UserName),
+	CONSTRAINT fkRequestee
+		FOREIGN Key(Requestee)
+		REFERENCES UserPrivate(UserName),
+	CONSTRAINT fkReqEmail
+		FOREIGN Key(Email)
+		REFERENCES UserPrivate(Email),
+	CONSTRAINT fkGameInvite
+		FOREIGN Key(GameInvite)
+		REFERENCES Game(GameID)
+);
+
+/* Leaderboards */ 
 CREATE TABLE Leaderboard(
 	LeaderboardID INT NOT NULL AUTO_INCREMENT,
 	GameID INT NOT NULL,
