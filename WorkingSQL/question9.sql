@@ -7,7 +7,7 @@ BEGIN
 	INSERT INTO HotList (GameID, NOPLastWeek)
 	SELECT GameID, COUNT(GameID) FROM Plays WHERE Plays.TimeOfPlay > DATE(DATE_SUB(NOW(), INTERVAL 7 DAY))
 	GROUP BY GameID;
-	SELECT * FROM Hotlist;
+	SELECT Ranking, Name, NOPLastWeek FROM Hotlist, Game WHERE Hotlist.GameID = Game.GameID limit 10;
 	DROP TABLE Hotlist;
 END; //
 DELIMITER ;
