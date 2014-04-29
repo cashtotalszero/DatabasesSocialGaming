@@ -1,4 +1,4 @@
-/* PROCEDURE TO UPDATE AVERAGE RATING OF GAMES */
+/* PROCEDURE TO UPDATE AVERAGE RATING OF GAMES (q2 & q3) */
 DROP PROCEDURE IF EXISTS UpdateAverage;
 DELIMITER $$
 CREATE PROCEDURE UpdateAverage(IN updated INT)
@@ -27,6 +27,50 @@ BEGIN
 END $$
 DELIMITER ; 
 
+/* FUNCTION TO CATCH CHEATERS (q6) */
+DROP FUNCTION IF EXISTS CatchCheaters;
+DELIMITER $$
+CREATE FUNCTION CatchCheaters(game INT,score INT)
+RETURNS INT
+BEGIN
+	DECLARE checkedScore INT;
+	DECLARE minimum INT;
+	DECLARE maximum INT;
+
+	/* Initialise the score to return */
+	SELECT score
+	INTO checkedScore;
+	
+	/* Get max and min scores for the Game being updated */	
+	SELECT MinScore 
+	INTO minimum	
+	FROM Game
+	WHERE Game.GameID = game;
+	
+	SELECT MaxScore
+	INTO maximum 
+	FROM Game
+	WHERE Game.GameID = game;
+	
+	/* 
+	If the new score is < min or > max score, set it to the minimum for that Game. 
+	NOTE: If no minScore is provided, it defaults to NULL. Therefore, cheaters
+	will get no score! 
+	*/
+	IF(
+		score < minimum
+		OR 
+		score > maximum
+	) 
+	THEN
+		SET checkedScore = minimum;
+	END IF;
+
+	/* Return the final checked score */
+	RETURN checkedScore;
+END $$
+DELIMITER ;
+
 
 /* Triggers AFTER INSERT Game */
 DELIMITER $$
@@ -43,59 +87,24 @@ DELIMITER ;
 /* BEFORE TRIGGERS */
 
 /* Triggers BEFORE INSERT to UserToGame */
+DROP TRIGGER IF EXISTS BeforeInsertUserToGame;
 DELIMITER $$
-CREATE TRIGGER checkScoreInsert 
+CREATE TRIGGER BeforeInsertUserToGame 
 BEFORE INSERT ON UserToGame
 FOR EACH ROW 
 BEGIN
-	/* Get max and min scores for the updated Game */
-	SET @minimum = (
-		SELECT MinScore 
-		FROM Game
-		WHERE Game.GameID = NEW.GameID);
-	SET @maximum = (
-		SELECT MaxScore 
-		FROM Game
-		WHERE Game.GameID = NEW.GameID);
-	
-	/* AP: If new score is < minScore or > maxScore, set to the minScore (q6). 
-	NOTE: If no minScore is provided, it defaults to NULL. Therefore, cheaters
-	will get no score! */
-	IF(
-		NEW.LastScore < @minimum
-		OR 
-		NEW.LastScore > @maximum
-	) 
-	THEN
-		SET NEW.LastScore = @minimum;
-	END IF;
+	SET NEW.LastScore = (SELECT CatchCheaters(NEW.GameID,NEW.LastScore));
 END $$
 DELIMITER ;
 
 /* Triggers BEFORE UPDATE to UserToGame */
-
+DROP TRIGGER IF EXISTS BeforeInsertUserToGame;
 DELIMITER $$
-CREATE TRIGGER checkScoreUpdate 
-BEFORE UPDATE ON UserToGame
+CREATE TRIGGER BeforeInsertUserToGame 
+BEFORE INSERT ON UserToGame
 FOR EACH ROW 
 BEGIN
-	/* NOTE: This code is identical to checkScoreInsert but triggers for UPDATES */
-	SET @minimum = (
-		SELECT MinScore 
-		FROM Game
-		WHERE Game.GameID = NEW.GameID);
-	SET @maximum = (
-		SELECT MaxScore 
-		FROM Game
-		WHERE Game.GameID = NEW.GameID);
-	IF(
-		NEW.LastScore < @minimum
-		OR 
-		NEW.LastScore > @maximum
-	) 
-	THEN
-		SET NEW.LastScore = @minimum;
-	END IF;	
+	SET NEW.LastScore = (SELECT CatchCheaters(NEW.GameID,NEW.LastScore));
 END $$
 DELIMITER ;
 
@@ -103,7 +112,7 @@ DELIMITER ;
 
 /* Triggers AFTER INSERT to UserToGame */
 DELIMITER $$
-CREATE TRIGGER InsertUserToGame 
+CREATE TRIGGER AfterInsertUserToGame 
 AFTER INSERT ON UserToGame
 FOR EACH ROW 
 BEGIN
@@ -113,7 +122,7 @@ DELIMITER ;
 
 /* Triggers AFTER UPDATE on UserToGame */
 DELIMITER $$
-CREATE TRIGGER UpdateUserToGame 
+CREATE TRIGGER AfterUpdateUserToGame 
 AFTER UPDATE ON UserToGame
 FOR EACH ROW 
 BEGIN
@@ -149,7 +158,7 @@ DELIMITER ;
 	
 /* Triggers AFTER DELETE on UserToGame */
 DELIMITER $$
-CREATE TRIGGER DeleteUserToGame 
+CREATE TRIGGER AfterDeleteUserToGame 
 AFTER DELETE ON UserToGame
 FOR EACH ROW 
 BEGIN

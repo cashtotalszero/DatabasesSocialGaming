@@ -88,7 +88,7 @@ INSERT INTO GameToGenre(GameID,GenreID)
 /* USER/GAME LINKING RELATION */
 
 INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore)
-	VALUES('AlexParrott',2,1,35);
+	VALUES('AlexParrott',2,1,49);
 
 INSERT INTO UserToGame(UserName,GameID,UserRating)
 	VALUES('AlexParrott',1,3);

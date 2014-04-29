@@ -35,9 +35,9 @@ END $$
 DELIMITER ; 	
 
 /* Triggers AFTER INSERT to UserToGame */
-DROP TRIGGER IF EXISTS AfterInsertUserToGame; 
+DROP TRIGGER IF EXISTS InsertUserToGame; 
 DELIMITER $$
-CREATE TRIGGER AfterInsertUserToGame 
+CREATE TRIGGER InsertUserToGame 
 AFTER INSERT ON UserToGame
 FOR EACH ROW 
 BEGIN 
@@ -46,9 +46,9 @@ END $$
 DELIMITER ; 
 
 /* Triggers AFTER UPDATE on UserToGame */
-DROP TRIGGER IF EXISTS AfterUpdateUserToGame;
+DROP TRIGGER IF EXISTS UpdateUserToGame;
 DELIMITER $$
-CREATE TRIGGER AfterUpdateUserToGame 
+CREATE TRIGGER UpdateUserToGame 
 AFTER UPDATE ON UserToGame
 FOR EACH ROW 
 BEGIN
@@ -57,9 +57,9 @@ END $$
 DELIMITER ; 
 	
 /* Triggers AFTER DELETE on UserToGame */
-DROP TRIGGER IF EXISTS AfterDeleteUserToGame;
+DROP TRIGGER IF EXISTS DeleteUserToGame;
 DELIMITER $$
-CREATE TRIGGER AfterDeleteUserToGame 
+CREATE TRIGGER DeleteUserToGame 
 AFTER DELETE ON UserToGame
 FOR EACH ROW 
 BEGIN
