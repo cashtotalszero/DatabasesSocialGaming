@@ -27,10 +27,10 @@ DELIMITER ;
 CALL GetLeaderboard(1);
 
 
-update LeaderboardToUserToGame
-	SET TimeOfScore='2013-04-20 14:41:26'
-	WHERE Score=18 AND UserToGameID=3;
+update Scores
+	SET TimeOfScore='2013-05-20 14:41:26'
+	WHERE Score=9 AND UserToGameID=3;
 
 update Leaderboard 
-	SET TimePeriod='forever'
+	SET TimePeriod='1_year'
 	WHERE LeaderboardID=1;

@@ -148,9 +148,8 @@ BEGIN
 			This score is also logged in LeaderboardToUserToGame. THis table holds the record of every score on every game
 			at a certain time. This table can therefore be used to create all of the leaderboards for any game.*/
 		IF NEW.LastScore != OLD.LastScore THEN BEGIN 
-			INSERT INTO LeaderboardToUserToGame (LeaderboardID, UserToGameID, Score, TimeOfScore)
+			INSERT INTO Scores (UserToGameID, Score, TimeOfScore)
 			VALUES(
-				(SELECT LeaderboardID FROM Leaderboard WHERE Leaderboard.GameID = NEW.GameID),
 				(SELECT ID FROM UserToGame WHERE UserToGame.ID = NEW.ID),
 				(SELECT LastScore FROM UserToGame WHERE UserToGame.ID = NEW.ID),
 				NOW()

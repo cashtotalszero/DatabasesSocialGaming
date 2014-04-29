@@ -150,6 +150,7 @@ CREATE TABLE Leaderboard(
 		REFERENCES Game(GameID)
 );
 
+/*records any time a user palys a game*/
 CREATE TABLE Plays(
 	GameID INT NOT NULL,
 	UserName VARCHAR(20) NOT NULL,
@@ -158,19 +159,16 @@ CREATE TABLE Plays(
 		PRIMARY KEY(GameId, UserName, TimeOfPlay)
 );
 
-CREATE TABLE LeaderboardToUserToGame(
-	LeaderboardID INT NOT NULL,
+/*records all of the scores made on any game*/
+CREATE TABLE Scores(
 	UserToGameID INT NOT NULL,
 	Score INT NOT NULL,
 	TimeOfScore TIMESTAMP NOT NULL,
-	CONSTRAINT pk_LTUTG
+	CONSTRAINT pk_scores
 		PRIMARY KEY (TimeOfScore, UserToGameID),
-	CONSTRAINT fk_UTG
+	CONSTRAINT fk_scores
 		FOREIGN KEY (UserToGameID)
-		REFERENCES UserToGame(ID),
-	CONSTRAINT fk_Leaderboard
-		FOREIGN KEY (LeaderboardID)
-		REFERENCES Leaderboard(LeaderboardID)
+		REFERENCES UserToGame(ID)
 );
 
 /* Acheivement relations */
