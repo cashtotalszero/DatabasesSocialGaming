@@ -196,27 +196,3 @@ BEGIN
 END $$
 DELIMITER ; 
 
-/* FRIENDS TABLES */
-
-/* Creates matching friendships in Friends2 */
-DELIMITER $$
-CREATE TRIGGER createMatchingFriend 
-AFTER INSERT ON Friends
-FOR EACH ROW
-BEGIN
-	INSERT INTO Friends2 VALUES(
-		NEW.Friend,NEW.AccHolder);    
-END; $$
-DELIMITER ;
-
-/* Deletes matching friendships in Friends2 */
-DELIMITER $$
-CREATE TRIGGER deleteMatchingFriend 
-AFTER DELETE ON Friends
-FOR EACH ROW 
-BEGIN
-	DELETE FROM Friends2 
-	WHERE AccHolder = OLD.Friend 
-	AND Friend = OLD.AccHolder;
-END $$
-DELIMITER ; 
