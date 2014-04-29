@@ -214,6 +214,20 @@ DELIMITER ;
 
 /* FRIENDS TABLES */
 
+DELIMITER $$
+CREATE TRIGGER createFriendship 
+AFTER UPDATE ON FriendRequest
+FOR EACH ROW
+BEGIN
+	IF (NEW.FriendResponse = 'Accepted')
+	THEN BEGIN
+		INSERT INTO Friends VALUES (
+			NEW.Requester,NEW.Requestee
+	);
+	END; END IF;
+END; $$
+DELIMITER ;
+
 /* Creates matching friendships in Friends2 */
 DELIMITER $$
 CREATE TRIGGER createMatchingFriend 
@@ -236,4 +250,6 @@ BEGIN
 	AND Friend = OLD.AccHolder;
 END $$
 DELIMITER ; 
+
+
 
