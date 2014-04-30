@@ -9,7 +9,7 @@ Friends can only be made by creating a tuple in the FriendRequest table. If the
 other user accepts the request then the FriendResponse attribute must be updated
 which fires a trigger to update the Friends tables. This in turn fires a trigger
 to create the matching (reverse) friendship in Friends2. To obtain a complete 
-Friends list Friends and Friends2 must be merged using a UNION statement.
+Friends list Friends and Friends2 must be merged using a NATURAL JOIN.
 
 INVITING TO GAMES:
 An optional GameInvite attribute is also included in the FriendRequest relation.
@@ -94,11 +94,4 @@ BEGIN
 		NEW.Friend,NEW.AccHolder);    
 END; $$
 DELIMITER ;
-
-/* This query generates a table of all friendships */
-SELECT * FROM(
-	(SELECT * FROM Friends)
-	UNION DISTINCT
-	(SELECT * FROM Friends2)) 
-AS AllFriends;
 

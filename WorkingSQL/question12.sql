@@ -1,0 +1,4 @@
+SELECT AccHolder FROM
+((SELECT * FROM Friends)
+UNION DISTINCT
+(SELECT * FROM Friends2)) AS AllFriends;
