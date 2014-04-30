@@ -165,13 +165,6 @@ UPDATE Leaderboard
 SET SortOrder='desc'
 WHERE LeaderboardID=1;
 
-INSERT INTO Friends
-VALUES('AlexPArrott','WillWoodhead');
-
-<<<<<<< HEAD
-INSERT INTO Friends
-VALUES('AlexPArrott','JamesHamblion');
-=======
 INSERT INTO FriendRequest (Requester, Requestee)
 VALUES ('AlexParrott', 'ScarlettJo');
 
@@ -193,16 +186,3 @@ UPDATE FriendRequest
 SET FriendResponse = 'Accepted'
 WHERE RequestID = 3;
 
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> FETCH_HEAD

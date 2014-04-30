@@ -88,16 +88,16 @@ INSERT INTO GameToGenre(GameID,GenreID)
 /* USER/GAME LINKING RELATION */
 
 INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore,LastPlayDate)
-	VALUES('AlexParrott',1,1,35,'2014-12-30');
+	VALUES('AlexParrott',4,1,35,'2014-12-30');
 
 INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore,LastPlayDate)
-	VALUES('AlexParrott',2,3,15,'2014-12-31');
+	VALUES('AlexParrott',3,3,15,'2014-12-31');
 
 INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore,LastPlayDate)
-	VALUES('JamesHamblion',3,10,5,'2015-4-15');
+	VALUES('JamesHamblion',2,10,5,'2015-4-15');
 
 INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore,LastPlayDate)
-	VALUES('JamesHamblion',1,55.9,18,'2015-3-15');
+	VALUES('JamesHamblion',4,55.9,18,'2015-8-15');
 
 INSERT INTO UserToGame(UserName,GameID,UserRating)
 	VALUES('WillWoodhead',3,2.5);
