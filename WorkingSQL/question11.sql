@@ -3,16 +3,17 @@
 
 DROP PROCEDURE if exists GetFriendsLeaderboard;
 DELIMITER //
-CREATE PROCEDURE GetFriendsLeaderboard(UserN VARCHAR(30), GID)
+CREATE PROCEDURE GetFriendsLeaderboard(UserN VARCHAR(30), GID INT)
 BEGIN 
 
 	SET @ScoreFormat = (SELECT ScoreFormat FROM Game WHERE GameID = GID);
+	DROP TABLE if exists temp;
 	CREATE TABLE temp (Username VARCHAR(30) , Score INT , TimeOfScore TIMESTAMP);
 
 	INSERT INTO temp SELECT Username, Score, TimeOfScore FROM Scores, UserToGame 
 	WHERE Scores.UserToGameID = UserToGame.ID 
 	AND UserToGame.GameID = GID
-	AND Scores.UserToGameID IN (SELECT Friend FROM Friends UNION Friends2 WHERE AccHolder = UserN); 
+	AND Scores.UserToGameID IN (SELECT ID FROM UserToGame WHERE UserName IN (SELECT Friend FROM (SELECT * FROM Friends UNION SELECT * FROM Friends2) AS friendtemp WHERE AccHolder = UserN)); 
 
 	IF ((SELECT SortOrder FROM Game WHERE GameID=GID) = 'asc') THEN
 		SELECT  Username, CONCAT(Score,' ', @ScoreFormat) As Score, TimeOfScore FROM temp ORDER BY Score ASC;
@@ -25,5 +26,4 @@ BEGIN
 END; //
 DELIMITER ;
 
-CALL GetFriendsLeaderboard();
-
+CALL GetFriendsLeaderboard('AlexParrott', 1);

@@ -88,16 +88,16 @@ INSERT INTO GameToGenre(GameID,GenreID)
 /* USER/GAME LINKING RELATION */
 
 INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore,LastPlayDate)
-	VALUES('AlexParrott',2,1,35,'2014-12-30');
+	VALUES('AlexParrott',1,1,35,'2014-12-30');
 
 INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore,LastPlayDate)
-	VALUES('AlexParrott',1,3,15,'2014-12-31');
+	VALUES('AlexParrott',2,3,15,'2014-12-31');
 
 INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore,LastPlayDate)
-	VALUES('JamesHamblion',1,10,5,'2015-4-15');
+	VALUES('JamesHamblion',3,10,5,'2015-4-15');
 
 INSERT INTO UserToGame(UserName,GameID,UserRating,LastScore,LastPlayDate)
-	VALUES('JamesHamblion',4,55.9,18,'2015-3-15');
+	VALUES('JamesHamblion',1,55.9,18,'2015-3-15');
 
 INSERT INTO UserToGame(UserName,GameID,UserRating)
 	VALUES('WillWoodhead',3,2.5);
@@ -165,5 +165,44 @@ UPDATE Leaderboard
 SET SortOrder='desc'
 WHERE LeaderboardID=1;
 
+INSERT INTO Friends
+VALUES('AlexPArrott','WillWoodhead');
+
+<<<<<<< HEAD
+INSERT INTO Friends
+VALUES('AlexPArrott','JamesHamblion');
+=======
+INSERT INTO FriendRequest (Requester, Requestee)
+VALUES ('AlexParrott', 'ScarlettJo');
+
+INSERT INTO FriendRequest (Requester, Requestee)
+VALUES ('AlexParrott', 'WillWoodhead');
+
+INSERT INTO FriendRequest (Requester, Requestee)
+VALUES ('AlexParrott', 'JamesHamblion');
+
+UPDATE FriendRequest 
+SET FriendResponse = 'Accepted'
+WHERE RequestID = 1;
+
+UPDATE FriendRequest 
+SET FriendResponse = 'Accepted'
+WHERE RequestID = 2;
+
+UPDATE FriendRequest 
+SET FriendResponse = 'Accepted'
+WHERE RequestID = 3;
 
 
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> FETCH_HEAD

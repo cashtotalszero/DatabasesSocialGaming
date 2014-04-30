@@ -6,6 +6,7 @@ BEGIN
 
 SET @ScoreFormat = (SELECT ScoreFormat FROM Game WHERE GameID = (SELECT GameID FROM Leaderboard WHERE LeaderboardID = LBID));
 SET @GID = (SELECT GameID FROM Leaderboard WHERE LeaderboardID = LBID);
+DROP TABLE if exists temp;
 CREATE TABLE temp (Username VARCHAR(30) , Score INT , TimeOfScore TIMESTAMP); 
 
 	IF ((SELECT TimePeriod FROM Leaderboard WHERE LeaderboardID=LBID) = '1_year') THEN
