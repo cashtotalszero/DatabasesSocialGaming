@@ -166,4 +166,36 @@ SET SortOrder='desc'
 WHERE LeaderboardID=1;
 
 
+INSERT INTO FriendRequest (Requester, Requestee)
+VALUES ('AlexParrott', 'ScarlettJo');
+
+INSERT INTO FriendRequest (Requester, Requestee)
+VALUES ('AlexParrott', 'WillWoodhead');
+
+INSERT INTO FriendRequest (Requester, Requestee)
+VALUES ('AlexParrott', 'JamesHamblion');
+
+UPDATE FriendRequest 
+SET FriendResponse = 'Accepted'
+WHERE RequestID = 1;
+
+UPDATE FriendRequest 
+SET FriendResponse = 'Accepted'
+WHERE RequestID = 2;
+
+UPDATE FriendRequest 
+SET FriendResponse = 'Accepted'
+WHERE RequestID = 3;
+
+
+
+
+
+
+
+
+
+
+
+
 
