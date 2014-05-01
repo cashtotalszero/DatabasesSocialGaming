@@ -186,3 +186,10 @@ UPDATE FriendRequest
 SET FriendResponse = 'Accepted'
 WHERE RequestID = 3;
 
+/* Insert a few obscene words (for question 8) */
+INSERT INTO RudeWord
+	VALUES ('fuck'), ('shit'), ('bastard'), ('bitch');
+
+INSERT INTO RudeWord
+	VALUES ('cunt'), ('tosser');
+

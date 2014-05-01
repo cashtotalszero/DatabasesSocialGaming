@@ -1,4 +1,6 @@
-/* User relations */
+/* This file holds all the create statements to generate the database. */
+
+/* User information  relations */
 CREATE TABLE UserPublic(
 	UserName VARCHAR(20) NOT NULL,
 	Avatar VARCHAR(50) NOT NULL,
@@ -33,7 +35,7 @@ CREATE TABLE Game(
 	Name VARCHAR(30) NOT NULL,
 	AverageRating FLOAT DEFAULT NULL,
 	NoOfRatings INT DEFAULT NULL,
-	OverallRank INT UNIQUE DEFAULT NULL,
+	/*OverallRank INT UNIQUE DEFAULT NULL,*/
 	Publisher VARCHAR(20) NOT NULL,
 	ScoreFormat VARCHAR(20) NOT NULL DEFAULT 'points',
 	SortOrder ENUM('asc','desc') NOT NULL DEFAULT 'desc',
@@ -137,14 +139,15 @@ CREATE TABLE Friends2(
 		REFERENCES UserPublic(UserName)
 );
 
+/* Friend request relation with game invites */
 CREATE TABLE FriendRequest(
 	RequestID INT NOT NULL AUTO_INCREMENT,
 	Requester VARCHAR(20) NOT NULL,
 	Requestee VARCHAR(20) DEFAULT NULL,
 	Email VARCHAR(30) DEFAULT NULL,
-	FriendResponse ENUM('Accepted','Denied', 'Pending') NOT NULL DEFAULT'Pending',
+	FriendResponse ENUM('Accepted','Denied','Pending') NOT NULL DEFAULT'Pending',
 	GameInvite INT DEFAULT NULL,
-	InviteResponse ENUM('Accepted','Denied', 'Pending') NOT NULL DEFAULT'Pending',
+	InviteResponse ENUM('Accepted','Denied','Pending') NOT NULL DEFAULT'Pending',
 	
 	CONSTRAINT pkFriendReq
 		PRIMARY KEY(RequestID),
@@ -167,8 +170,9 @@ CREATE TABLE Leaderboard(
 	LeaderboardID INT NOT NULL AUTO_INCREMENT,
 	GameID INT NOT NULL,
 	SortOrder ENUM('asc','desc') NOT NULL DEFAULT 'desc',
-	TimePeriod ENUM('forever', '1_year', '1_week', '1_day') NOT NULL DEFAULT 'forever',
+	TimePeriod ENUM('forever','1_year','1_week','1_day') NOT NULL DEFAULT 'forever',
 	IsDefault BOOLEAN NOT NULL DEFAULT 0,
+	
 	CONSTRAINT pkLdbdID
 		PRIMARY KEY (LeaderboardID),
 	CONSTRAINT fk_ldbd_GameID
@@ -176,28 +180,30 @@ CREATE TABLE Leaderboard(
 		REFERENCES Game(GameID)
 );
 
-/*records any time a user palys a game*/
+/* Plays relation records any time a user plays a game */
 CREATE TABLE Plays(
 	GameID INT NOT NULL,
 	UserName VARCHAR(20) NOT NULL,
 	TimeOfPlay TIMESTAMP,
+	
 	CONSTRAINT pkNoOfPlaysID
-		PRIMARY KEY(GameId, UserName, TimeOfPlay)
+		PRIMARY KEY(GameId,UserName,TimeOfPlay)
 );
 
-/*records all of the scores made on any game*/
+/* Scores relation records all of the scores made on any game*/
 CREATE TABLE Scores(
 	UserToGameID INT NOT NULL,
 	Score INT NOT NULL,
 	TimeOfScore TIMESTAMP NOT NULL,
+	
 	CONSTRAINT pk_scores
-		PRIMARY KEY (TimeOfScore, UserToGameID),
+		PRIMARY KEY (TimeOfScore,UserToGameID),
 	CONSTRAINT fk_scores
 		FOREIGN KEY (UserToGameID)
 		REFERENCES UserToGame(ID)
 );
 
-/* Acheivement relations */
+/* Acheivement relation */
 CREATE TABLE Achievement (
 	achievementID INT AUTO_INCREMENT,
 	gameID INT NOT NULL,
@@ -207,6 +213,7 @@ CREATE TABLE Achievement (
 	pointValue INT NOT NULL DEFAULT 1,
 	postDescription VARCHAR(200),
 	preDescription VARCHAR(200),
+	
 	CONSTRAINT pkAchievement
 		PRIMARY KEY (achievementID),
 	CONSTRAINT fkAchievToGame
@@ -219,6 +226,7 @@ CREATE TABLE AchievementToUserToGame (
 	achievementID INT,
 	userToGameID INT,
 	dateGained DATE NOT NULL,
+	
 	CONSTRAINT pkAchievUsrGame
 		PRIMARY KEY (userToGameID, achievementID),
 	CONSTRAINT fk
@@ -226,12 +234,14 @@ CREATE TABLE AchievementToUserToGame (
 		REFERENCES UserToGame (ID)	
 );
 
+/* Matches relations */
 CREATE TABLE Matches (
 	MatchID INT AUTO_INCREMENT,
 	MatchName VARCHAR(30) NOT NULL,
 	Initiator INT NOT NULL,
 	MinPlayers INT NOT NULL DEFAULT 2,
 	MaxPlayers INT NOT NULL DEFAULT 2,
+	
 	CONSTRAINT pkMatch
 		PRIMARY KEY (MatchID),
 	CONSTRAINT fkmatch1
@@ -239,10 +249,11 @@ CREATE TABLE Matches (
 		REFERENCES UserToGame(ID)
 );
 
-
+/* Linking relation for matches, users and games */
 CREATE TABLE MatchToUserToGame(
 	MatchID INT NOT NULL,
 	UserToGameID INT NOT NULL,
+	
 	CONSTRAINT pkMatchToUserToGame
 		PRIMARY KEY (MatchID, UserToGameID),
 	CONSTRAINT fkMTUTG1
@@ -259,6 +270,7 @@ CREATE TABLE MatchRequest (
 	ReceivingUTG INT NOT NULL,
 	MatchID INT NOT NULL,
 	Pending BOOLEAN NOT NULL DEFAULT 1,
+	
 	CONSTRAINT pkmatchrequest
 		PRIMARY KEY (MatchRequestID),
 	CONSTRAINT fkmatchrequest
