@@ -181,25 +181,24 @@ CREATE TABLE Leaderboard(
 
 /* Plays relation records any time a user plays a game */
 CREATE TABLE Plays(
+	PlayID INT AUTO_INCREMENT,
 	GameID INT NOT NULL,
 	UserName VARCHAR(20) NOT NULL,
 	TimeOfPlay TIMESTAMP,
 	
 	CONSTRAINT pkNoOfPlaysID
-		PRIMARY KEY(GameId,UserName,TimeOfPlay)
+		PRIMARY KEY(PlayID)
 );
 
 /* Scores relation records all of the scores made on any game*/
 CREATE TABLE Scores(
+	ScoreID INT AUTO_INCREMENT,
 	UserToGameID INT NOT NULL,
 	Score INT NOT NULL,
 	TimeOfScore TIMESTAMP NOT NULL,
 	
 	CONSTRAINT pk_scores
-		PRIMARY KEY (TimeOfScore,UserToGameID),
-	CONSTRAINT fk_scores
-		FOREIGN KEY (UserToGameID)
-		REFERENCES UserToGame(ID)
+		PRIMARY KEY (ScoreID)
 );
 
 /* Acheivement relation */
@@ -287,3 +286,6 @@ CREATE TABLE RudeWord (
 	CONSTRAINT pkRudeWord
 		PRIMARY KEY (word)
 );
+
+
+SHOW tables;

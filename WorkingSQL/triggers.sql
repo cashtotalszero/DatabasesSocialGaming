@@ -98,23 +98,27 @@ BEGIN
 	/* Check whether the scores are ascending or descending */
 	IF ((SELECT SortOrder FROM Game WHERE GameID=GID) = 'asc') 
 	THEN
-		SELECT @rank:=@rank+1 AS rank,(@rank/@count)*100 AS top_X_percent,UserToGameID,Score,TimeOfScore  
-		FROM Scores 
-		WHERE UserToGameID = (
-			SELECT ID 
-			FROM UserToGame 
-			WHERE UserName = User 
-			AND GameID = GID)
-		ORDER BY Score ASC LIMIT 0, 1;
+		SELECT r AS rank, topXP AS top_x_percent, scor AS BestScore FROM (
+			SELECT @rank:=@rank+1 AS r, (@rank/@count)*100 AS topXP ,UserToGameID,Score AS scor  
+			FROM Scores 
+			WHERE UserToGameID IN (
+				SELECT ID 
+				FROM UserToGame 
+				WHERE GameID = GID)
+			ORDER BY Score ASC
+		) AS temp WHERE UserToGameID = (SELECT ID FROM UserToGame WHERE Username = User AND GameID = GID )
+		ORDER BY BestScore ASC LIMIT 1;
 	ELSE 
-		SELECT @rank:=@rank+1 AS rank,(@rank/@count)*100 AS top_X_percent,UserToGameID,Score,TimeOfScore  
-		FROM Scores 
-		WHERE UserToGameID = (
-			SELECT ID 
-			FROM UserToGame 
-			WHERE UserName = User 
-			AND GameID = GID)
-		ORDER BY Score DESC LIMIT 0, 1;
+		SELECT r AS rank, topXP AS top_x_percent, scor AS BestScore FROM (
+			SELECT @rank:=@rank+1 AS r,(@rank/@count)*100 AS topXP, UserToGameID, Score AS scor
+			FROM Scores 
+			WHERE UserToGameID IN (
+				SELECT ID 
+				FROM UserToGame 
+				WHERE GameID = GID)
+			ORDER BY Score DESC
+		) AS temp WHERE UserToGameID = (SELECT ID FROM UserToGame WHERE Username = User AND GameID = GID  ) 
+		ORDER BY BestScore DESC LIMIT 1;
 	END IF;
 END; $$
 DELIMITER ;
@@ -381,11 +385,11 @@ BEGIN
 
 	IF ((SELECT SortOrder FROM Game WHERE GameID=GID) = 'asc') 
 	THEN
-		SELECT  Username,CONCAT(Score,' ', @ScoreFormat) AS Score, TimeOfScore 
+		SELECT  Username, Score, CONCAT(' ', @ScoreFormat) AS units
 		FROM temp 
 		ORDER BY Score ASC;
 	ELSE
-		SELECT  Username,CONCAT(Score,' ', @ScoreFormat) AS Score, TimeOfScore 
+		SELECT  Username, Score, CONCAT(' ', @ScoreFormat) AS units
 		FROM temp 
 		ORDER BY Score DESC;
 	END IF;
@@ -762,11 +766,11 @@ BEGIN
 
 	IF ((SELECT SortOrder FROM Leaderboard WHERE LeaderboardID=LBID) = 'asc') 
 	THEN
-		SELECT  Username, CONCAT(Score,' ', @ScoreFormat) AS Score, TimeOfScore 
+		SELECT  Username, Score, CONCAT(' ', @ScoreFormat) AS Units, TimeOfScore 
 		FROM temp 
 		ORDER BY Score ASC;
 	ELSE
-		SELECT  Username, CONCAT(Score,' ', @ScoreFormat) AS Score, TimeOfScore 
+		SELECT  Username, Score, CONCAT(' ', @ScoreFormat) AS Units, TimeOfScore 
 		FROM temp 
 		ORDER BY Score DESC;
 	END IF;
@@ -922,16 +926,15 @@ BEGIN
 END $$
 DELIMITER ; 
 
-/* TRIGGERS FOR Scores relation */
-
-/* BEFORE INSERT on Scores */
+/* TRIGGERS FOR Scores relation 
+/* BEFORE INSERT on Scores 
 DROP TRIGGER IF EXISTS BeforeInsertScores;
 DELIMITER $$
 CREATE TRIGGER BeforeInsertScores 
 BEFORE INSERT ON Scores
 FOR EACH ROW 
 BEGIN
-	/* QUESTION 6 */
+	/* QUESTION 6 
 	SET NEW.Score = (
 		SELECT CatchCheaters(
 			(SELECT GameID
@@ -943,14 +946,14 @@ BEGIN
 END $$
 DELIMITER ;
 
-/* BEFORE UPDATE to Scores */
+/* BEFORE UPDATE to Scores 
 DROP TRIGGER IF EXISTS BeforeUpdateScores;
 DELIMITER $$
 CREATE TRIGGER BeforeUpdateScores 
 BEFORE UPDATE ON Scores
 FOR EACH ROW 
 BEGIN
-	/* QUESTION 6 */
+	/* QUESTION 6 
 	SET NEW.Score = (
 		SELECT CatchCheaters(
 			(SELECT GameID
@@ -960,7 +963,7 @@ BEGIN
 			),
 			NEW.Score));
 END $$
-DELIMITER ;
+DELIMITER ;*/
 
 /* TRIGGERS FOR MatchRequest RELATION */
 
