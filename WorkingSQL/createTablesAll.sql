@@ -61,7 +61,6 @@ CREATE TABLE Genre(
 CREATE TABLE GameToGenre(
 	GameID INT NOT NULL,
 	GenreID INT NOT NULL,
-	RankInGenre INT DEFAULT NULL,
 
 	CONSTRAINT pkIDs
 		PRIMARY KEY(GameID,GenreID),
@@ -269,7 +268,7 @@ CREATE TABLE MatchRequest (
 	SendingUTG INT NOT NULL,
 	ReceivingUTG INT NOT NULL,
 	MatchID INT NOT NULL,
-	Pending BOOLEAN NOT NULL DEFAULT 1,
+	Response ENUM('Accepted','Denied','Pending') NOT NULL DEFAULT'Pending',
 	
 	CONSTRAINT pkmatchrequest
 		PRIMARY KEY (MatchRequestID),

@@ -884,8 +884,8 @@ CREATE TRIGGER matchRequest_after_update
 AFTER UPDATE ON MatchRequest
 FOR EACH ROW
 BEGIN 
-	/* if pending flag goes off, then the userto game is added to the match*/
-	IF NEW.Pending = 0 
+	/* if response is accepted, then the usertogame is added to the match*/
+	IF NEW.Response = 'Accepted' 
 	THEN BEGIN 
 		INSERT INTO MatchToUserToGame (MatchID, UserToGameID)
 		VALUES(NEW.MatchID, NEW.ReceivingUTG);
