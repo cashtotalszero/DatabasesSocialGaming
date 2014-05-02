@@ -26,5 +26,5 @@ DELIMITER ;
 CALL CreateMatch (1, 2, 4, "Family round robin");
 CALL MatchRequesting(1, 2, 1);
 UPDATE MatchRequest
-SET Pending = 0
+SET Response = 'Accepted'
 WHERE MatchRequestID = 1;
