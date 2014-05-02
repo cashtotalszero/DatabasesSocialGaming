@@ -23,8 +23,34 @@ BEGIN
 END; //
 DELIMITER ;
 
+
+
+/* AFTER UPDATE on UserTogametomatch */
+DELIMITER $$
+CREATE TRIGGER matchtousertogame_after_update 
+AFTER UPDATE ON MatchToUserToGame
+FOR EACH ROW
+BEGIN 
+	
+	IF NEW.status = 'Quit' 
+	THEN BEGIN
+		UPDATE Matches
+		SET NoOfPlayers = (SELECT NoOfPlayers FROM Matches WHERE MatchID = NEW.MatchID) - 1
+		WHERE MatchID = NEW.MatchID;
+	END; END IF;
+
+END $$
+DELIMITER ;
+
+
+
+
 CALL CreateMatch (1, 2, 4, "Family round robin");
 CALL MatchRequesting(1, 2, 1);
 UPDATE MatchRequest
 SET Response = 'Accepted'
 WHERE MatchRequestID = 1;
+
+
+
+
