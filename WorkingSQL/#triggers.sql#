@@ -1044,47 +1044,6 @@ BEGIN
 END $$
 DELIMITER ; 
 
-/* Alex THESE TRIGGERS DOES NOT WORK AT PRESENT  */
-/* TRIGGERS FOR Scores relation */
-/* BEFORE INSERT on Scores */
-/*
-DROP TRIGGER IF EXISTS BeforeInsertScores;
-DELIMITER $$
-CREATE TRIGGER BeforeInsertScores 
-BEFORE INSERT ON Scores
-FOR EACH ROW 
-BEGIN
-	/* QUESTION 6 
-	SET NEW.Score = (
-		SELECT CatchCheaters(
-			(SELECT GameID
-			FROM UserToGame, Scores
-			WHERE ID = UserToGameID
-			AND UserToGameID = NEW.UserToGameID
-			),
-			NEW.Score));
-END $$
-DELIMITER ;
-
-/* BEFORE UPDATE to Scores 
-DROP TRIGGER IF EXISTS BeforeUpdateScores;
-DELIMITER $$
-CREATE TRIGGER BeforeUpdateScores 
-BEFORE UPDATE ON Scores
-FOR EACH ROW 
-BEGIN
-	/* QUESTION 6 
-	SET NEW.Score = (
-		SELECT CatchCheaters(
-			(SELECT GameID
-			FROM UserToGame,Scores
-			WHERE ID = UserToGameID
-			AND UserToGameID = NEW.UserToGameID
-			),
-			NEW.Score));
-END $$
-DELIMITER ;
-*/
 /* TRIGGERS FOR MatchRequest RELATION */
 
 /* AFTER UPDATE on MatchRequest */

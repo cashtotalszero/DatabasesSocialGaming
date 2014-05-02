@@ -64,7 +64,6 @@ INSERT INTO UserPrivate
 	VALUES('BradPitt','maaaaaad75','Brad','Pitt','Brad@Pitt.com'
 );
 
-
 /* FRIENDS DUMMY DATA TO BE ADDED ONCE TRIGGER IS FINAL */
 
 /* GAME INFORMATION */
@@ -102,8 +101,6 @@ INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDes
 	VALUES('3','./img.jpg','skyroads','EA','2001-1-1','drive the sky roads','skyroads.com', 1000,0);
 INSERT INTO Game (AgeRating, DefaultImage, Name, Publisher, ReleaseDate, TextDescription, url, MaxScore, MinScore)
 	VALUES ('7','./img.jpg','flick men','Rovio','2010-04-11','flick all the men','www.flickmen.com',10000, 1);
-
-
 
 /* Dummy values for Genre */
 INSERT INTO Genre 
@@ -324,8 +321,6 @@ INSERT INTO UserToGame(UserName,GameID,UserRating)
 INSERT INTO UserToGame(UserName,GameID,UserRating)
 	VALUES('BradPitt',16,6.1);
 
-
-
 /* Dummy values for Achievement table */
 INSERT INTO Achievement
 	VALUES (1, 1, 'I wish I was a policeman!', 0, 0, 10, 'You stole 100 police cars', 'Steal 100 police cars');
@@ -365,6 +360,7 @@ INSERT INTO RudeWord
 INSERT INTO RudeWord
 	VALUES ('cunt'), ('tosser');
 
+/* Create friendships */
 CALL RequestFriendName('AlexParrott', 'ScarlettJo');
 CALL RequestFriendName('AlexParrott', 'WillWoodhead');
 CALL RequestFriendName('AlexParrott', 'JamesHamblion');
@@ -378,7 +374,6 @@ CALL RequestFriendName('BradPitt', 'GeorgeClooney');
 CALL RequestFriendName('DavidCameron', 'WillWoodhead');
 CALL RequestFriendName('DavidCameron', 'AlexParrott');
 CALL RequestFriendName('AliceInWonderland', 'GeorgeClooney');
-
 CALL AcceptFriendship(1);
 CALL AcceptFriendship(2);
 CALL AcceptFriendship(3);
@@ -393,98 +388,7 @@ CALL AcceptFriendship(11);
 CALL AcceptFriendship(12);
 CALL AcceptFriendship(13);
 
-/*
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('AlexParrott', 'ScarlettJo');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('AlexParrott', 'WillWoodhead');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('AlexParrott', 'JamesHamblion');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('BobHope', 'JamesHamblion');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('JamesHamblion', 'BarackObama');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('ScarlettJo', 'GeorgeClooney');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('ScarlettJo', 'WillWoodhead');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('ScarlettJo', 'BradPitt');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('BradPitt', 'BobHope');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('BradPitt', 'GeorgeClooney');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('DavidCameron', 'WillWoodhead');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('DavidCameron', 'AlexParrott');
-
-INSERT INTO FriendRequest (Requester, Requestee)
-VALUES ('AliceInWonderland', 'GeorgeClooney');
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 1;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 2;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 3;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 4;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 5;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 6;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 7;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 8;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 9;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 10;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 11;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 12;
-
-UPDATE FriendRequest 
-SET FriendResponse = 'Accepted'
-WHERE RequestID = 13;
-*/
+/* Populate plays & scores relations */
 DROP PROCEDURE if exists populatePlays;
 DELIMITER //
 CREATE PROCEDURE populatePlays()
@@ -505,8 +409,6 @@ BEGIN
 END //
 DELIMITER ;
 CALL populatePlays();
-
-
 
 DROP PROCEDURE if exists populateScores;
 DELIMITER //
