@@ -1,104 +1,133 @@
-/* QUESTION 10 */
-
 /*
-Please note that this SQL code is already included in the createTablesAll.sql and
-triggers.sql files. They has been separated here for explanation purposes only.
+QUESTION 10:
 
-CREATING FRIENDSHIPS:
-Friends can only be made by creating a tuple in the FriendRequest table. If the 
-other user accepts the request then the FriendResponse attribute must be updated
-which fires a trigger to update the Friends tables. This in turn fires a trigger
-to create the matching (reverse) friendship in Friends2. To obtain a complete 
-Friends list Friends and Friends2 must be merged using a UNION statement.
+The following procedures can be used to create Friendships via a friendship
+request. A friend request can be made by calling the RequestFriendName procedure
+providing the UserNames of the requesterand the requested friend:
 
-INVITING TO GAMES:
-An optional GameInvite attribute is also included in the FriendRequest relation.
-This can be used at the time of the initial friendship request or at a later date.
+CALL RequestFriendName('AlexParrott,'WillWoodhead');
+
+Alternatively the requested friend's email can be used by calling the RequestFriendEmail
+procedure:
+
+CALL RequestFriendEmail('AlexParrott','Will@Woodhead.com');
+
+To accept a friendship the AcceptFriendship procedure must be called providing
+the unique ResquestID, this automatically creates the friendship in the Friends
+relation:
+
+CALL AcceptFriendship(4);
+
+Friend requests can be declined and friendships can be deleted by calling the
+DenyFriendship procedure (again providing a unique ResquestID):
+
+CALL DenyFriendship(7);
+
+Author: Alex Parrott
 */
 
-CREATE TABLE Friends(
-	AccHolder VARCHAR(20) NOT NULL,
-	Friend VARCHAR(20) NOT NULL,
-
-	CONSTRAINT pkFriends
-		PRIMARY KEY(AccHolder, Friend),
-	CONSTRAINT fkUser
-		FOREIGN Key(AccHolder)
-		REFERENCES UserPublic(UserName),
-	CONSTRAINT fkUser2
-		FOREIGN Key(Friend)
-		REFERENCES UserPublic(UserName)
-);
-
-CREATE TABLE Friends2(
-	AccHolder VARCHAR(20) NOT NULL,
-	Friend VARCHAR(20) NOT NULL,
-
-	CONSTRAINT pkFriends2
-		PRIMARY KEY(AccHolder,Friend),
-	CONSTRAINT fkUser1_1
-		FOREIGN Key(AccHolder)
-		REFERENCES UserPublic(UserName),
-	CONSTRAINT fkUser2_1
-		FOREIGN Key(Friend)
-		REFERENCES UserPublic(UserName)
-);
-
-CREATE TABLE FriendRequest(
-	RequestID INT NOT NULL AUTO_INCREMENT,
-	Requester VARCHAR(20) NOT NULL,
-	Requestee VARCHAR(20) DEFAULT NULL,
-	Email VARCHAR(30) DEFAULT NULL,
-	FriendResponse ENUM('Accepted','Denied', 'Pending') NOT NULL DEFAULT'Pending',
-	GameInvite INT DEFAULT NULL,
-	InviteResponse ENUM('Accepted','Denied', 'Pending') NOT NULL DEFAULT'Pending',
-	
-	CONSTRAINT pkFriendReq
-		PRIMARY KEY(RequestID),
-	CONSTRAINT fkRequester
-		FOREIGN Key(Requester)
-		REFERENCES UserPrivate(UserName),
-	CONSTRAINT fkRequestee
-		FOREIGN Key(Requestee)
-		REFERENCES UserPrivate(UserName),
-	CONSTRAINT fkReqEmail
-		FOREIGN Key(Email)
-		REFERENCES UserPrivate(Email),
-	CONSTRAINT fkGameInvite
-		FOREIGN Key(GameInvite)
-		REFERENCES Game(GameID)
-);
-
-/* Trigger to create Friendship in Friends relation if FriendRequest is accepted */
+/* Procedure creates a Friendship Request via UserName */
+DROP PROCEDURE IF EXISTS RequestFriendName;
 DELIMITER $$
-CREATE TRIGGER createFriendship 
-AFTER UPDATE ON FriendRequest
-FOR EACH ROW
+CREATE PROCEDURE RequestFriendName(IN User VARCHAR(20),reqFriend VARCHAR(20))
 BEGIN
-	IF (NEW.FriendResponse = 'Accepted')
-	THEN BEGIN
-		INSERT INTO Friends VALUES (
-			NEW.Requester,NEW.Requestee
+	INSERT INTO FriendRequest(Requester,Requestee)
+	VALUES(User,reqFriend);
+END; $$
+DELIMITER ;
+
+/* Alternative procedure creates a Friendship Request via Email address */
+DROP PROCEDURE IF EXISTS RequestFriendEmail;
+DELIMITER $$
+CREATE PROCEDURE RequestFriendEmail(IN User VARCHAR(20),reqEmail VARCHAR(30))
+BEGIN
+	INSERT INTO FriendRequest(Requester,Email)
+	VALUES(User,reqEmail);
+END; $$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS AcceptFriendship;
+DELIMITER $$
+CREATE PROCEDURE AcceptFriendship(IN reqID INT)
+BEGIN
+	DECLARE Friend1 VARCHAR(20);
+	DECLARE Friend2 VARCHAR(30);
+
+	/* Assign UserNames to friends */
+	SET Friend1 = (
+		SELECT Requester
+		FROM FriendRequest
+		WHERE RequestID = reqID);
+	SET Friend2 = (
+		SELECT Requestee
+		FROM FriendRequest
+		WHERE RequestID = reqID);
+	/* If Email is used for request then get the UserName */
+	IF Friend2 IS NULL
+	THEN
+		SET Friend2 = (
+			SELECT UserName
+			FROM UserPrivate
+			WHERE Email = (
+				SELECT Email
+				FROM FriendRequest
+				WHERE RequestID = reqID)
+		);
+	END IF;
+
+	/* Update the friend request to Accepted */
+	UPDATE FriendRequest
+	SET FriendResponse = 'Accepted'
+	WHERE RequestID = reqID;
+ 
+	/* Create this friendship in the Friends table */
+	INSERT INTO Friends(AccHolder,Friend) VALUES (Friend1,Friend2);
+	INSERT INTO Friends(AccHolder,Friend) VALUES (Friend2,Friend1);
+END; $$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS DenyFriendship;
+DELIMITER $$
+CREATE PROCEDURE DenyFriendship(IN reqID INT)
+BEGIN
+	DECLARE Friend1 VARCHAR(20);
+	DECLARE Friend2 VARCHAR(30);
+
+	/* Assign UserNames to friends */
+	SET Friend1 = (
+		SELECT Requester
+		FROM FriendRequest
+		WHERE RequestID = reqID
 	);
-	END; END IF;
+	SET Friend2 = (
+		SELECT Requestee
+		FROM FriendRequest
+		WHERE RequestID = reqID
+	);
+	/* If Email is used for request then get the UserName */
+	IF Friend2 IS NULL
+	THEN
+		SET Friend2 = (
+			SELECT UserName
+			FROM UserPrivate
+			WHERE Email = (
+				SELECT Email
+				FROM FriendRequest
+				WHERE RequestID = reqID)
+		);
+	END IF;
+
+	/* Update the friend request to Denied */
+	UPDATE FriendRequest
+	SET FriendResponse = 'Denied'
+	WHERE RequestID = reqID;
+
+	/* Delete this friendship from the Friends table */
+	DELETE FROM Friends 
+	WHERE AccHolder = Friend1
+	AND Friend = Friend2;
+	DELETE FROM Friends
+	WHERE AccHolder = Friend2
+	AND Friend = Friend1;
 END; $$
 DELIMITER ;
-
-/* Trigger creates a matching friendship in Friends2 */
-DELIMITER $$
-CREATE TRIGGER createMatchingFriend 
-AFTER INSERT ON Friends
-FOR EACH ROW
-BEGIN
-	INSERT INTO Friends2 VALUES(
-		NEW.Friend,NEW.AccHolder);    
-END; $$
-DELIMITER ;
-
-/* This query generates a table of all friendships */
-SELECT * FROM(
-	(SELECT * FROM Friends)
-	UNION DISTINCT
-	(SELECT * FROM Friends2)) 
-AS AllFriends;
-
