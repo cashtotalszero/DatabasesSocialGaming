@@ -994,7 +994,7 @@ See question10.sql for a detailed explanation.
 
 Author: Alex Parrott
 
-*/
+
 DELIMITER $$
 CREATE TRIGGER createFriendship 
 AFTER UPDATE ON FriendRequest
@@ -1009,7 +1009,7 @@ BEGIN
 END; $$
 DELIMITER ;
 
-/* Creates matching friendships in Friends2 */
+/* Creates matching friendships in Friends2 
 DELIMITER $$
 CREATE TRIGGER createMatchingFriend 
 AFTER INSERT ON Friends
@@ -1020,7 +1020,7 @@ BEGIN
 END; $$
 DELIMITER ;
 
-/* Deletes matching friendships in Friends2 */
+/* Deletes matching friendships in Friends2 
 DELIMITER $$
 CREATE TRIGGER deleteMatchingFriend 
 AFTER DELETE ON Friends
@@ -1031,5 +1031,5 @@ BEGIN
 	AND Friend = OLD.AccHolder;
 END $$
 DELIMITER ; 
-
+*/
 
