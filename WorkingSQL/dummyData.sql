@@ -365,6 +365,35 @@ INSERT INTO RudeWord
 INSERT INTO RudeWord
 	VALUES ('cunt'), ('tosser');
 
+CALL RequestFriendName('AlexParrott', 'ScarlettJo');
+CALL RequestFriendName('AlexParrott', 'WillWoodhead');
+CALL RequestFriendName('AlexParrott', 'JamesHamblion');
+CALL RequestFriendName('BobHope', 'JamesHamblion');
+CALL RequestFriendName('JamesHamblion', 'BarackObama');
+CALL RequestFriendName('ScarlettJo', 'GeorgeClooney');
+CALL RequestFriendName('ScarlettJo', 'WillWoodhead');
+CALL RequestFriendName('ScarlettJo', 'BradPitt');
+CALL RequestFriendName('BradPitt', 'BobHope');
+CALL RequestFriendName('BradPitt', 'GeorgeClooney');
+CALL RequestFriendName('DavidCameron', 'WillWoodhead');
+CALL RequestFriendName('DavidCameron', 'AlexParrott');
+CALL RequestFriendName('AliceInWonderland', 'GeorgeClooney');
+
+CALL AcceptFriendship(1);
+CALL AcceptFriendship(2);
+CALL AcceptFriendship(3);
+CALL AcceptFriendship(4);
+CALL AcceptFriendship(5);
+CALL AcceptFriendship(6);
+CALL AcceptFriendship(7);
+CALL AcceptFriendship(8);
+CALL AcceptFriendship(9);
+CALL AcceptFriendship(10);
+CALL AcceptFriendship(11);
+CALL AcceptFriendship(12);
+CALL AcceptFriendship(13);
+
+/*
 INSERT INTO FriendRequest (Requester, Requestee)
 VALUES ('AlexParrott', 'ScarlettJo');
 
@@ -455,7 +484,7 @@ WHERE RequestID = 12;
 UPDATE FriendRequest 
 SET FriendResponse = 'Accepted'
 WHERE RequestID = 13;
-
+*/
 DROP PROCEDURE if exists populatePlays;
 DELIMITER //
 CREATE PROCEDURE populatePlays()

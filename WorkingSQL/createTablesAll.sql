@@ -123,7 +123,7 @@ CREATE TABLE Friends(
 		FOREIGN Key(Friend)
 		REFERENCES UserPublic(UserName)
 );
-
+/*
 CREATE TABLE Friends2(
 	AccHolder VARCHAR(20) NOT NULL,
 	Friend VARCHAR(20) NOT NULL,
@@ -137,7 +137,7 @@ CREATE TABLE Friends2(
 		FOREIGN Key(Friend)
 		REFERENCES UserPublic(UserName)
 );
-
+*/
 /* Friend request relation with game invites */
 CREATE TABLE FriendRequest(
 	RequestID INT NOT NULL AUTO_INCREMENT,
@@ -145,9 +145,9 @@ CREATE TABLE FriendRequest(
 	Requestee VARCHAR(20) DEFAULT NULL,
 	Email VARCHAR(30) DEFAULT NULL,
 	FriendResponse ENUM('Accepted','Denied','Pending') NOT NULL DEFAULT'Pending',
-	GameInvite INT DEFAULT NULL,
+	/*GameInvite INT DEFAULT NULL,
 	InviteResponse ENUM('Accepted','Denied','Pending') NOT NULL DEFAULT'Pending',
-	
+	*/
 	CONSTRAINT pkFriendReq
 		PRIMARY KEY(RequestID),
 	CONSTRAINT fkRequester
@@ -158,10 +158,10 @@ CREATE TABLE FriendRequest(
 		REFERENCES UserPrivate(UserName),
 	CONSTRAINT fkReqEmail
 		FOREIGN Key(Email)
-		REFERENCES UserPrivate(Email),
-	CONSTRAINT fkGameInvite
+		REFERENCES UserPrivate(Email)/*,
+	/CONSTRAINT fkGameInvite
 		FOREIGN Key(GameInvite)
-		REFERENCES Game(GameID)
+		REFERENCES Game(GameID)*/
 );
 
 /* Leaderboards */ 

@@ -61,7 +61,6 @@ CREATE TABLE Genre(
 CREATE TABLE GameToGenre(
 	GameID INT NOT NULL,
 	GenreID INT NOT NULL,
-	RankInGenre INT DEFAULT NULL,
 
 	CONSTRAINT pkIDs
 		PRIMARY KEY(GameID,GenreID),
@@ -182,25 +181,24 @@ CREATE TABLE Leaderboard(
 
 /* Plays relation records any time a user plays a game */
 CREATE TABLE Plays(
+	PlayID INT AUTO_INCREMENT,
 	GameID INT NOT NULL,
 	UserName VARCHAR(20) NOT NULL,
 	TimeOfPlay TIMESTAMP,
 	
 	CONSTRAINT pkNoOfPlaysID
-		PRIMARY KEY(GameId,UserName,TimeOfPlay)
+		PRIMARY KEY(PlayID)
 );
 
 /* Scores relation records all of the scores made on any game*/
 CREATE TABLE Scores(
+	ScoreID INT AUTO_INCREMENT,
 	UserToGameID INT NOT NULL,
 	Score INT NOT NULL,
 	TimeOfScore TIMESTAMP NOT NULL,
 	
 	CONSTRAINT pk_scores
-		PRIMARY KEY (TimeOfScore,UserToGameID),
-	CONSTRAINT fk_scores
-		FOREIGN KEY (UserToGameID)
-		REFERENCES UserToGame(ID)
+		PRIMARY KEY (ScoreID)
 );
 
 /* Acheivement relation */
@@ -269,7 +267,7 @@ CREATE TABLE MatchRequest (
 	SendingUTG INT NOT NULL,
 	ReceivingUTG INT NOT NULL,
 	MatchID INT NOT NULL,
-	Pending BOOLEAN NOT NULL DEFAULT 1,
+	Response ENUM('Accepted','Denied','Pending') NOT NULL DEFAULT'Pending',
 	
 	CONSTRAINT pkmatchrequest
 		PRIMARY KEY (MatchRequestID),
@@ -280,3 +278,14 @@ CREATE TABLE MatchRequest (
 		FOREIGN KEY (ReceivingUTG)
 		REFERENCES UserToGame(ID)
 );
+
+/* Relation to hold contain obscene/offensive terms */
+CREATE TABLE RudeWord (
+	word VARCHAR(50),
+	
+	CONSTRAINT pkRudeWord
+		PRIMARY KEY (word)
+);
+
+
+SHOW tables;
