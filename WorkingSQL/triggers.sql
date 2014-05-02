@@ -179,7 +179,6 @@ BEGIN
 	/* Initialise the score to return */
 	SELECT score
 	INTO checkedScore;
-	
 	/* Get max and min scores for the Game being updated */	
 	SELECT MinScore 
 	INTO minimum	
@@ -830,7 +829,7 @@ FOR EACH ROW
 BEGIN
 	/* QUESTION 6 */
 	SET NEW.LastScore = (
-		SELECT CatchCheaters(NEW.GameID,NEW.LastScore));
+		SELECT CatchCheaters(NEW.GameID, NEW.LastScore));
 END $$
 DELIMITER ;
 
@@ -843,7 +842,8 @@ FOR EACH ROW
 BEGIN
 	/* QUESTION 6 */
 	SET NEW.LastScore = (
-		SELECT CatchCheaters(NEW.GameID,NEW.LastScore));
+		SELECT CatchCheaters(NEW.GameID, NEW.LastScore));
+
 END $$
 DELIMITER ;
 
@@ -926,6 +926,7 @@ BEGIN
 END $$
 DELIMITER ; 
 
+/* Alex THESE TRIGGERS DOES NOT WORK AT PRESENT  */
 /* TRIGGERS FOR Scores relation 
 /* BEFORE INSERT on Scores 
 DROP TRIGGER IF EXISTS BeforeInsertScores;
@@ -938,7 +939,7 @@ BEGIN
 	SET NEW.Score = (
 		SELECT CatchCheaters(
 			(SELECT GameID
-			FROM UserToGame,Scores
+			FROM UserToGame, Scores
 			WHERE ID = UserToGameID
 			AND UserToGameID = NEW.UserToGameID
 			),
