@@ -332,11 +332,31 @@ END; $$
 DELIMITER ;
 
 /*
-
 QUESTION 10:
 
-See triggers section below.
+The following procedures can be used to create Friendships via a friendship
+request. A friend request can be made by calling the RequestFriendName procedure
+providing the UserNames of the requesterand the requested friend:
 
+CALL RequestFriendName('AlexParrott,'WillWoodhead');
+
+Alternatively the requested friend's email can be used by calling the RequestFriendEmail
+procedure:
+
+CALL RequestFriendEmail('AlexParrott','Will@Woodhead.com');
+
+To accept a friendship the AcceptFriendship procedure must be called providing
+the unique ResquestID, this automatically creates the friendship in the Friends
+relation:
+
+CALL AcceptFriendship(4);
+
+Friend requests can be declined and friendships can be deleted by calling the
+DenyFriendship procedure (again providing a unique ResquestID):
+
+CALL DenyFriendship(7);
+
+Author: Alex Parrott
 */
 
 /* Procedure creates a Friendship Request via UserName */
@@ -1083,52 +1103,4 @@ BEGIN
 
 END $$
 DELIMITER ;
-
-/* TRIGGERS FOR FriendRequest & Friends RELATIONS */
-
-/* QUESTION 10:
-
-The following triggers generate friendships upon acceptance of a friend request.
-See question10.sql for a detailed explanation.
-
-Author: Alex Parrott
-
-
-DELIMITER $$
-CREATE TRIGGER createFriendship 
-AFTER UPDATE ON FriendRequest
-FOR EACH ROW
-BEGIN
-	IF (NEW.FriendResponse = 'Accepted')
-	THEN BEGIN
-		INSERT INTO Friends VALUES (
-			NEW.Requester,NEW.Requestee
-	);
-	END; END IF;
-END; $$
-DELIMITER ;
-
-/* Creates matching friendships in Friends2 
-DELIMITER $$
-CREATE TRIGGER createMatchingFriend 
-AFTER INSERT ON Friends
-FOR EACH ROW
-BEGIN
-	INSERT INTO Friends2 VALUES(
-		NEW.Friend,NEW.AccHolder);    
-END; $$
-DELIMITER ;
-
-/* Deletes matching friendships in Friends2 
-DELIMITER $$
-CREATE TRIGGER deleteMatchingFriend 
-AFTER DELETE ON Friends
-FOR EACH ROW 
-BEGIN
-	DELETE FROM Friends2 
-	WHERE AccHolder = OLD.Friend 
-	AND Friend = OLD.AccHolder;
-END $$
-DELIMITER ; 
-*/
 

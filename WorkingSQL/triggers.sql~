@@ -9,6 +9,29 @@ All questions have been separated out into their own .sql files for clarity.
 */
 
 /* 
+QUESTION 1: 
+
+Given a game, list all the users who own that game 
+
+Example query - looks up game with GameID 4:
+CALL Question1(4);
+
+Author: Alex Parrott
+*/
+DROP PROCEDURE IF EXISTS Question1;
+DELIMITER $$
+CREATE PROCEDURE Question1(IN gameVar INT)
+BEGIN
+	SELECT UserPublic.UserName 
+	FROM Game,UserPublic,UserToGame
+	WHERE UserPublic.UserName=UserToGame.UserName 
+	AND Game.GameID=UserToGame.GameID 
+	AND Game.GameID=gameVar;
+
+END $$
+DELIMITER ;
+
+/* 
 QUESTION 2 & QUESTION 3:
 
 When a game recieves a user rating this procedure updates its average average 
@@ -75,23 +98,27 @@ BEGIN
 	/* Check whether the scores are ascending or descending */
 	IF ((SELECT SortOrder FROM Game WHERE GameID=GID) = 'asc') 
 	THEN
-		SELECT @rank:=@rank+1 AS rank,(@rank/@count)*100 AS top_X_percent,UserToGameID,Score,TimeOfScore  
-		FROM Scores 
-		WHERE UserToGameID = (
-			SELECT ID 
-			FROM UserToGame 
-			WHERE UserName = User 
-			AND GameID = GID)
-		ORDER BY Score ASC LIMIT 0, 1;
+		SELECT r AS rank, topXP AS top_x_percent, scor AS BestScore FROM (
+			SELECT @rank:=@rank+1 AS r, (@rank/@count)*100 AS topXP ,UserToGameID,Score AS scor  
+			FROM Scores 
+			WHERE UserToGameID IN (
+				SELECT ID 
+				FROM UserToGame 
+				WHERE GameID = GID)
+			ORDER BY Score ASC
+		) AS temp WHERE UserToGameID = (SELECT ID FROM UserToGame WHERE Username = User AND GameID = GID )
+		ORDER BY BestScore ASC LIMIT 1;
 	ELSE 
-		SELECT @rank:=@rank+1 AS rank,(@rank/@count)*100 AS top_X_percent,UserToGameID,Score,TimeOfScore  
-		FROM Scores 
-		WHERE UserToGameID = (
-			SELECT ID 
-			FROM UserToGame 
-			WHERE UserName = User 
-			AND GameID = GID)
-		ORDER BY Score DESC LIMIT 0, 1;
+		SELECT r AS rank, topXP AS top_x_percent, scor AS BestScore FROM (
+			SELECT @rank:=@rank+1 AS r,(@rank/@count)*100 AS topXP, UserToGameID, Score AS scor
+			FROM Scores 
+			WHERE UserToGameID IN (
+				SELECT ID 
+				FROM UserToGame 
+				WHERE GameID = GID)
+			ORDER BY Score DESC
+		) AS temp WHERE UserToGameID = (SELECT ID FROM UserToGame WHERE Username = User AND GameID = GID  ) 
+		ORDER BY BestScore DESC LIMIT 1;
 	END IF;
 END; $$
 DELIMITER ;
@@ -152,7 +179,6 @@ BEGIN
 	/* Initialise the score to return */
 	SELECT score
 	INTO checkedScore;
-	
 	/* Get max and min scores for the Game being updated */	
 	SELECT MinScore 
 	INTO minimum	
@@ -288,18 +314,19 @@ BEGIN
 		Ranking INT NOT NULL AUTO_INCREMENT, 
 		GameID INT NOT NULL, 
 		NOPLastWeek INT,
-		
 		CONSTRAINT pkID PRIMARY KEY(ranking)
 	);
 
 	INSERT INTO HotList (GameID, NOPLastWeek)
-	SELECT GameID, COUNT(GameID) 
+	SELECT GameID, COUNT(GameID) AS count
 	FROM Plays 
 	WHERE Plays.TimeOfPlay > DATE(DATE_SUB(NOW(), INTERVAL 7 DAY))
-	GROUP BY GameID;
-	SELECT Ranking,Name,NOPLastWeek 
+	GROUP BY GameID 
+	ORDER BY count DESC;
+
+	SELECT Ranking,Name, NOPLastWeek 
 	FROM Hotlist, Game 
-	WHERE Hotlist.GameID = Game.GameID limit 10;
+	WHERE Hotlist.GameID = Game.GameID ORDER BY NOPLastWeek DESC limit 10;
 	DROP TABLE Hotlist;
 END; $$
 DELIMITER ;
@@ -311,6 +338,113 @@ QUESTION 10:
 See triggers section below.
 
 */
+
+/* Procedure creates a Friendship Request via UserName */
+DROP PROCEDURE IF EXISTS RequestFriendName;
+DELIMITER $$
+CREATE PROCEDURE RequestFriendName(IN User VARCHAR(20),reqFriend VARCHAR(20))
+BEGIN
+	INSERT INTO FriendRequest(Requester,Requestee)
+	VALUES(User,reqFriend);
+END; $$
+DELIMITER ;
+
+/* Alternative procedure creates a Friendship Request via Email address */
+DROP PROCEDURE IF EXISTS RequestFriendEmail;
+DELIMITER $$
+CREATE PROCEDURE RequestFriendEmail(IN User VARCHAR(20),reqEmail VARCHAR(30))
+BEGIN
+	INSERT INTO FriendRequest(Requester,Email)
+	VALUES(User,reqEmail);
+END; $$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS AcceptFriendship;
+DELIMITER $$
+CREATE PROCEDURE AcceptFriendship(IN reqID INT)
+BEGIN
+	DECLARE Friend1 VARCHAR(20);
+	DECLARE Friend2 VARCHAR(30);
+
+	/* Assign UserNames to friends */
+	SET Friend1 = (
+		SELECT Requester
+		FROM FriendRequest
+		WHERE RequestID = reqID);
+	SET Friend2 = (
+		SELECT Requestee
+		FROM FriendRequest
+		WHERE RequestID = reqID);
+	/* If Email is used for request then get the UserName */
+	IF Friend2 IS NULL
+	THEN
+		SET Friend2 = (
+			SELECT UserName
+			FROM UserPrivate
+			WHERE Email = (
+				SELECT Email
+				FROM FriendRequest
+				WHERE RequestID = reqID)
+		);
+	END IF;
+
+	/* Update the friend request to Accepted */
+	UPDATE FriendRequest
+	SET FriendResponse = 'Accepted'
+	WHERE RequestID = reqID;
+ 
+	/* Create this friendship in the Friends table */
+	INSERT INTO Friends(AccHolder,Friend) VALUES (Friend1,Friend2);
+	INSERT INTO Friends(AccHolder,Friend) VALUES (Friend2,Friend1);
+
+END; $$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS DenyFriendship;
+DELIMITER $$
+CREATE PROCEDURE DenyFriendship(IN reqID INT)
+BEGIN
+	DECLARE Friend1 VARCHAR(20);
+	DECLARE Friend2 VARCHAR(30);
+
+	/* Assign UserNames to friends */
+	SET Friend1 = (
+		SELECT Requester
+		FROM FriendRequest
+		WHERE RequestID = reqID
+	);
+	SET Friend2 = (
+		SELECT Requestee
+		FROM FriendRequest
+		WHERE RequestID = reqID
+	);
+	/* If Email is used for request then get the UserName */
+	IF Friend2 IS NULL
+	THEN
+		SET Friend2 = (
+			SELECT UserName
+			FROM UserPrivate
+			WHERE Email = (
+				SELECT Email
+				FROM FriendRequest
+				WHERE RequestID = reqID)
+		);
+	END IF;
+
+	/* Update the friend request to Denied */
+	UPDATE FriendRequest
+	SET FriendResponse = 'Denied'
+	WHERE RequestID = reqID;
+
+	/* Delete this friendship from the Friends table */
+	DELETE FROM Friends 
+	WHERE AccHolder = Friend1
+	AND Friend = Friend2;
+	DELETE FROM Friends
+	WHERE AccHolder = Friend2
+	AND Friend = Friend1;
+END; $$
+DELIMITER ;
 
 /*
 QUESTION 11:
@@ -346,27 +480,82 @@ BEGIN
 		FROM UserToGame 
 		WHERE UserName IN (
 			SELECT Friend 
-			FROM (
-				SELECT * 
-				FROM Friends 
-				UNION 
-				SELECT * 
-				FROM Friends2) 
+			FROM Friends
 			AS friendtemp 
 			WHERE AccHolder = UserN)
 		); 
 
 	IF ((SELECT SortOrder FROM Game WHERE GameID=GID) = 'asc') 
 	THEN
-		SELECT  Username,CONCAT(Score,' ', @ScoreFormat) AS Score, TimeOfScore 
+		SELECT  Username, Score, CONCAT(' ', @ScoreFormat) AS units
 		FROM temp 
 		ORDER BY Score ASC;
 	ELSE
-		SELECT  Username,CONCAT(Score,' ', @ScoreFormat) AS Score, TimeOfScore 
+		SELECT  Username, Score, CONCAT(' ', @ScoreFormat) AS units
 		FROM temp 
 		ORDER BY Score DESC;
 	END IF;
 	DROP TABLE temp;
+END; $$
+DELIMITER ;
+
+/*
+QUESTION 12:
+
+When given a UserName (passed as a parameter), this procedure lists all the User's
+online friends. All offline friends are also listed with their last login time 
+and the name of the last game they played.
+
+An exmaple query (lists all of AlexParrott's friends): 
+CALL ShowFriends('AlexParrott');
+
+Author: Alex Parrott
+
+*/
+DROP PROCEDURE IF EXISTS ShowFriends;
+DELIMITER $$
+CREATE PROCEDURE ShowFriends(IN User VARCHAR(20))
+BEGIN
+	/* Create a table of all specified user's friends */
+	CREATE TABLE AllFriends(
+		SELECT Friend 
+		FROM Friends
+		WHERE AccHolder = User
+	);
+	/* Create a table of last games played by each friend */
+	/* (1) Get the date of the last play */
+	CREATE TABLE LastDate(	
+		SELECT UserName,MAX(LastPlayDate) AS LastPlay 
+		FROM UserToGame
+		GROUP BY UserName
+		ORDER BY LastPlayDate DESC
+	);
+	/* (2) Get the unique ID and name of the game played on this date */
+	CREATE TABLE LastGame(
+		SELECT UserToGame.UserName,Game.GameID,Name
+		FROM UserToGame
+		JOIN LastDate ON LastDate.UserName = UserToGame.UserName
+		JOIN Game ON UserToGame.GameID = Game.GameID
+		WHERE LastPlay = LastPlayDate
+	);
+
+	/* Display list of all online friends */
+	SELECT UserName,AccountStatus 
+	FROM UserPublic,AllFriends
+	WHERE UserPublic.UserName = AllFriends.Friend
+	AND AccountStatus = 'Online';
+
+	/* Display list of offline friends with last login and last game played */
+	SELECT UserPublic.UserName,AccountStatus,LastLogin,Name AS LastPlayed
+	FROM UserPublic,AllFriends,LastGame
+	WHERE UserPublic.UserName = AllFriends.Friend
+	AND UserPublic.UserName = LastGame.UserName
+	AND AccountStatus = 'Offline';
+
+	DROP TABLE AllFriends;
+	DROP TABLE LastGame;
+	DROP TABLE LastDate;
+
 END; $$
 DELIMITER ;
 
@@ -676,11 +865,11 @@ BEGIN
 
 	IF ((SELECT SortOrder FROM Leaderboard WHERE LeaderboardID=LBID) = 'asc') 
 	THEN
-		SELECT  Username, CONCAT(Score,' ', @ScoreFormat) AS Score, TimeOfScore 
+		SELECT  Username, Score, CONCAT(' ', @ScoreFormat) AS Units, TimeOfScore 
 		FROM temp 
 		ORDER BY Score ASC;
 	ELSE
-		SELECT  Username, CONCAT(Score,' ', @ScoreFormat) AS Score, TimeOfScore 
+		SELECT  Username, Score, CONCAT(' ', @ScoreFormat) AS Units, TimeOfScore 
 		FROM temp 
 		ORDER BY Score DESC;
 	END IF;
@@ -740,7 +929,7 @@ FOR EACH ROW
 BEGIN
 	/* QUESTION 6 */
 	SET NEW.LastScore = (
-		SELECT CatchCheaters(NEW.GameID,NEW.LastScore));
+		SELECT CatchCheaters(NEW.GameID, NEW.LastScore));
 END $$
 DELIMITER ;
 
@@ -753,7 +942,8 @@ FOR EACH ROW
 BEGIN
 	/* QUESTION 6 */
 	SET NEW.LastScore = (
-		SELECT CatchCheaters(NEW.GameID,NEW.LastScore));
+		SELECT CatchCheaters(NEW.GameID, NEW.LastScore));
+
 END $$
 DELIMITER ;
 
@@ -836,20 +1026,20 @@ BEGIN
 END $$
 DELIMITER ; 
 
-/* TRIGGERS FOR Scores relation */
-
-/* BEFORE INSERT on Scores */
+/* Alex THESE TRIGGERS DOES NOT WORK AT PRESENT  */
+/* TRIGGERS FOR Scores relation 
+/* BEFORE INSERT on Scores 
 DROP TRIGGER IF EXISTS BeforeInsertScores;
 DELIMITER $$
 CREATE TRIGGER BeforeInsertScores 
 BEFORE INSERT ON Scores
 FOR EACH ROW 
 BEGIN
-	/* QUESTION 6 */
+	/* QUESTION 6 
 	SET NEW.Score = (
 		SELECT CatchCheaters(
 			(SELECT GameID
-			FROM UserToGame,Scores
+			FROM UserToGame, Scores
 			WHERE ID = UserToGameID
 			AND UserToGameID = NEW.UserToGameID
 			),
@@ -857,14 +1047,14 @@ BEGIN
 END $$
 DELIMITER ;
 
-/* BEFORE UPDATE to Scores */
+/* BEFORE UPDATE to Scores 
 DROP TRIGGER IF EXISTS BeforeUpdateScores;
 DELIMITER $$
 CREATE TRIGGER BeforeUpdateScores 
 BEFORE UPDATE ON Scores
 FOR EACH ROW 
 BEGIN
-	/* QUESTION 6 */
+	/* QUESTION 6 
 	SET NEW.Score = (
 		SELECT CatchCheaters(
 			(SELECT GameID
@@ -874,7 +1064,7 @@ BEGIN
 			),
 			NEW.Score));
 END $$
-DELIMITER ;
+DELIMITER ;*/
 
 /* TRIGGERS FOR MatchRequest RELATION */
 
@@ -903,7 +1093,7 @@ See question10.sql for a detailed explanation.
 
 Author: Alex Parrott
 
-*/
+
 DELIMITER $$
 CREATE TRIGGER createFriendship 
 AFTER UPDATE ON FriendRequest
@@ -918,7 +1108,7 @@ BEGIN
 END; $$
 DELIMITER ;
 
-/* Creates matching friendships in Friends2 */
+/* Creates matching friendships in Friends2 
 DELIMITER $$
 CREATE TRIGGER createMatchingFriend 
 AFTER INSERT ON Friends
@@ -929,7 +1119,7 @@ BEGIN
 END; $$
 DELIMITER ;
 
-/* Deletes matching friendships in Friends2 */
+/* Deletes matching friendships in Friends2 
 DELIMITER $$
 CREATE TRIGGER deleteMatchingFriend 
 AFTER DELETE ON Friends
@@ -940,5 +1130,5 @@ BEGIN
 	AND Friend = OLD.AccHolder;
 END $$
 DELIMITER ; 
-
+*/
 
