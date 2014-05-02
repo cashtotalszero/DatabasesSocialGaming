@@ -9,6 +9,29 @@ All questions have been separated out into their own .sql files for clarity.
 */
 
 /* 
+QUESTION 1: 
+
+Given a game, list all the users who own that game 
+
+Example query - looks up game with GameID 4:
+CALL Question1(4);
+
+Author: Alex Parrott
+*/
+DROP PROCEDURE IF EXISTS Question1;
+DELIMITER $$
+CREATE PROCEDURE Question1(IN gameVar INT)
+BEGIN
+	SELECT UserPublic.UserName 
+	FROM Game,UserPublic,UserToGame
+	WHERE UserPublic.UserName=UserToGame.UserName 
+	AND Game.GameID=UserToGame.GameID 
+	AND Game.GameID=gameVar;
+
+END $$
+DELIMITER ;
+
+/* 
 QUESTION 2 & QUESTION 3:
 
 When a game recieves a user rating this procedure updates its average average 
@@ -367,6 +390,69 @@ BEGIN
 		ORDER BY Score DESC;
 	END IF;
 	DROP TABLE temp;
+END; $$
+DELIMITER ;
+
+/*
+QUESTION 12:
+
+When given a UserName (passed as a parameter), this procedure lists all the User's
+online friends. All offline friends are also listed with their last login time 
+and the name of the last game they played.
+
+An exmaple query (lists all of AlexParrott's friends): 
+CALL ShowFriends('AlexParrott');
+
+Author: Alex Parrott
+
+*/
+DROP PROCEDURE IF EXISTS ShowFriends;
+DELIMITER $$
+CREATE PROCEDURE ShowFriends(IN User VARCHAR(20))
+BEGIN
+	/* Create a table of all specified user's friends */
+	CREATE TABLE AllFriends(
+		SELECT Friend FROM(
+			(SELECT * FROM Friends) 
+			UNION DISTINCT 
+			(SELECT * FROM Friends2)) 
+		AS CombinedFriends 
+		WHERE AccHolder = User
+	);
+	/* Create a table of last games played by each friend */
+	/* (1) Get the date of the last play */
+	CREATE TABLE LastDate(	
+		SELECT UserName,MAX(LastPlayDate) AS LastPlay 
+		FROM UserToGame
+		GROUP BY UserName
+		ORDER BY LastPlayDate DESC
+	);
+	/* (2) Get the unique ID and name of the game played on this date */
+	CREATE TABLE LastGame(
+		SELECT UserToGame.UserName,Game.GameID,Name
+		FROM UserToGame
+		JOIN LastDate ON LastDate.UserName = UserToGame.UserName
+		JOIN Game ON UserToGame.GameID = Game.GameID
+		WHERE LastPlay = LastPlayDate
+	);
+
+	/* Display list of all online friends */
+	SELECT UserName,AccountStatus 
+	FROM UserPublic,AllFriends
+	WHERE UserPublic.UserName = AllFriends.Friend
+	AND AccountStatus = 'Online';
+
+	/* Display list of offline friends with last login and last game played */
+	SELECT UserPublic.UserName,AccountStatus,LastLogin,Name AS LastPlayed
+	FROM UserPublic,AllFriends,LastGame
+	WHERE UserPublic.UserName = AllFriends.Friend
+	AND UserPublic.UserName = LastGame.UserName
+	AND AccountStatus = 'Offline';
+
+	DROP TABLE AllFriends;
+	DROP TABLE LastGame;
+	DROP TABLE LastDate;
+
 END; $$
 DELIMITER ;
 
