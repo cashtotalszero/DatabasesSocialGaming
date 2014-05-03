@@ -1086,6 +1086,9 @@ BEGIN
 	THEN BEGIN 
 		INSERT INTO MatchToUserToGame (MatchID, UserToGameID)
 		VALUES(NEW.MatchID, NEW.ReceivingUTG);
+		UPDATE Matches 
+		SET NoOfPlayer = (SELECT NoOfPlayer FROM Matches WHERE MatchID = NEW.MatchID) + 1
+		WHERE MatchID = New.MatchID;
 	END; END IF;
 
 END $$

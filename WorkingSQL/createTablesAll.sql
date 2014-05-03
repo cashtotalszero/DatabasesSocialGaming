@@ -239,6 +239,8 @@ CREATE TABLE Matches (
 	Initiator INT NOT NULL,
 	MinPlayers INT NOT NULL DEFAULT 2,
 	MaxPlayers INT NOT NULL DEFAULT 2,
+	NoOfPlayer INT NOT NULL DEFAULT 1,
+	Status ENUM('not_started', 'in_play', 'ended') NOT NULL DEFAULT 'not_started',
 	
 	CONSTRAINT pkMatch
 		PRIMARY KEY (MatchID),
@@ -251,6 +253,7 @@ CREATE TABLE Matches (
 CREATE TABLE MatchToUserToGame(
 	MatchID INT NOT NULL,
 	UserToGameID INT NOT NULL,
+	PlayerStatus ENUM('playing', 'paused', 'quit') NOT NULL DEFAULT 'playing',
 	
 	CONSTRAINT pkMatchToUserToGame
 		PRIMARY KEY (MatchID, UserToGameID),
