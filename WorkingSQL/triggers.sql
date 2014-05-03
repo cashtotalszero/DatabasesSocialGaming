@@ -1107,3 +1107,18 @@ BEGIN
 END $$
 DELIMITER ;
 
+/* Setup the TRIGGER on User-Public table*/
+DROP TRIGGER userNameEntryCheck;
+DELIMITER $$
+CREATE TRIGGER userNameEntryCheck
+BEFORE INSERT ON UserPublic
+FOR EACH ROW
+BEGIN
+	SET @usrname = NEW.userName;
+	SET @obscene = isUserNameRude(@usrname);
+	IF @obscene THEN
+		SET NEW.AccountStatus := 'Locked';
+	END IF;
+END; $$
+DELIMITER ;
+
