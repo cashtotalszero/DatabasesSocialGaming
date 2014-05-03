@@ -162,7 +162,6 @@ the score is reset to the min score value.
 
 This function is called by a triggers: 
 - Before any UPDATE or INSERT on the UserToGame relation (which holds the LastScore attribute) 
-- Before any UPDATE or INSERT on the Scores relation.
 
 Author: Alex Parrott
  */
@@ -217,6 +216,31 @@ See question7.sql for an example query.
 Author: Will Woodhead
 
 */
+DROP PROCEDURE IF EXISTS DayAndWeekLeaders;
+DELIMITER $$
+CREATE PROCEDURE DayAndWeekLeaders()
+BEGIN 
+
+	SET @gameCount = (SELECT COUNT(GameID) FROM Game);
+	SET @index = 1;
+
+	WHILE( @index <= @gameCount) 
+	DO
+		INSERT INTO Leaderboard (GameID, SortOrder, TimePeriod)
+		VALUES (
+			@index, 
+			(SELECT SortOrder FROM Game WHERE GameID = @index),'1_week'
+		);
+		INSERT INTO Leaderboard (GameID, SortOrder, TimePeriod)
+		VALUES (
+			@index, 
+			(SELECT SortOrder FROM Game WHERE GameID = @index),'1_day'
+		);
+		SET @index = @index + 1;
+	END WHILE ;
+
+END; $$
+DELIMITER ;
 
 /* JAMES THIS PROCEDURE DOES NOT WORK AT PRESENT 
 linked trigger below has also been commented out for this reason
@@ -475,9 +499,7 @@ BEGIN
 			SELECT Friend 
 			FROM Friends
 			AS friendtemp 
-			WHERE AccHolder = UserN 
-			UNION
-			SELECT UserN)
+			WHERE AccHolder = UserN)
 		); 
 
 	IF ((SELECT SortOrder FROM Game WHERE GameID=GID) = 'asc') 
@@ -629,6 +651,7 @@ PROCEDURE to show a users status screen
 
 See question14.sql for example queries and tests.
 
+Author: James Hamblion
 */
 DROP PROCEDURE IF EXISTS ShowStatusScreen;
 DELIMITER $$
@@ -903,24 +926,13 @@ BEGIN
 	/* Create a default leaderboard at the creation of any new game */
 	INSERT INTO Leaderboard (GameID, IsDefault, SortOrder)
 	VALUES (
-		NEW.GameID,
-		1,
-		(SELECT SortOrder 
+		(SELECT GameID 
+		FROM Game 
+		WHERE Game.GameID = NEW.GameID), 1, (
+			SELECT SortOrder 
 			FROM Game 
 			WHERE Game.GameID = NEW.GameID)
 	);
-	INSERT INTO Leaderboard (GameID, SortOrder, TimePeriod)
-		VALUES (
-			NEW.GameID, 
-			(SELECT SortOrder FROM Game WHERE Game.GameID = NEW.GameID),
-			'1_week'
-		);
-		INSERT INTO Leaderboard (GameID, SortOrder, TimePeriod)
-		VALUES (
-			NEW.GameID, 
-			(SELECT SortOrder FROM Game WHERE Game.GameID = NEW.GameID),
-			'1_day'
-		);
 END $$
 DELIMITER ;
 
@@ -1032,47 +1044,6 @@ BEGIN
 END $$
 DELIMITER ; 
 
-/* Alex THESE TRIGGERS DOES NOT WORK AT PRESENT  */
-/* TRIGGERS FOR Scores relation */
-/* BEFORE INSERT on Scores */
-/*
-DROP TRIGGER IF EXISTS BeforeInsertScores;
-DELIMITER $$
-CREATE TRIGGER BeforeInsertScores 
-BEFORE INSERT ON Scores
-FOR EACH ROW 
-BEGIN
-	/* QUESTION 6 
-	SET NEW.Score = (
-		SELECT CatchCheaters(
-			(SELECT GameID
-			FROM UserToGame, Scores
-			WHERE ID = UserToGameID
-			AND UserToGameID = NEW.UserToGameID
-			),
-			NEW.Score));
-END $$
-DELIMITER ;
-
-/* BEFORE UPDATE to Scores 
-DROP TRIGGER IF EXISTS BeforeUpdateScores;
-DELIMITER $$
-CREATE TRIGGER BeforeUpdateScores 
-BEFORE UPDATE ON Scores
-FOR EACH ROW 
-BEGIN
-	/* QUESTION 6 
-	SET NEW.Score = (
-		SELECT CatchCheaters(
-			(SELECT GameID
-			FROM UserToGame,Scores
-			WHERE ID = UserToGameID
-			AND UserToGameID = NEW.UserToGameID
-			),
-			NEW.Score));
-END $$
-DELIMITER ;
-*/
 /* TRIGGERS FOR MatchRequest RELATION */
 
 /* AFTER UPDATE on MatchRequest */
