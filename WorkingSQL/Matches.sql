@@ -1,55 +1,36 @@
-DROP PROCEDURE if exists CreateMatch;
-DELIMITER //
-CREATE PROCEDURE CreateMatch(UTGID INT, minPlayer INT, maxPlayer INT, matchnm VARCHAR(30))
-BEGIN 
 
-INSERT INTO Matches (Initiator, MinPlayers, MaxPlayers, MatchName)
-VALUES (UTGID, minPlayer, maxPlayer, matchnm);
+/* someone creates a match */
+CALL CreateMatch (3, 2, 4, "Family round robin");
+SELECT * FROM Matches;
 
-INSERT INTO MatchToUserToGame (MatchID, UserToGameID)
-VALUES (
-	(SELECT MatchID FROM Matches WHERE Initiator=UTGID AND MatchName=matchnm),
-	UTGID
-	);
-END; //
-DELIMITER ;
+/*request other users who play the game to join the game*/
+CALL MatchRequesting(3, 6, 1);
+CALL MatchRequesting(3, 7, 1);
+CALL MatchRequesting(3, 12, 1);
+SELECT * FROM MatchRequest;
 
-DROP PROCEDURE if exists MatchRequesting;
-DELIMITER //
-CREATE PROCEDURE MatchRequesting(Sending INT, Receiving INT, mID INT)
-BEGIN 
-	INSERT INTO MatchRequest (SendingUTG, ReceivingUTG, MatchID)
-	VALUES (Sending, Receiving, mID);
-END; //
-DELIMITER ;
-
-
-
-/* AFTER UPDATE on UserTogametomatch */
-DELIMITER $$
-CREATE TRIGGER matchtousertogame_after_update 
-AFTER UPDATE ON MatchToUserToGame
-FOR EACH ROW
-BEGIN 
-	
-	IF NEW.status = 'Quit' 
-	THEN BEGIN
-		UPDATE Matches
-		SET NoOfPlayers = (SELECT NoOfPlayers FROM Matches WHERE MatchID = NEW.MatchID) - 1
-		WHERE MatchID = NEW.MatchID;
-	END; END IF;
-
-END $$
-DELIMITER ;
-
-
-
-
-CALL CreateMatch (1, 2, 4, "Family round robin");
-CALL MatchRequesting(1, 2, 1);
+/* the other users accept the request*/
 UPDATE MatchRequest
 SET Response = 'Accepted'
 WHERE MatchRequestID = 1;
+
+UPDATE MatchRequest
+SET Response = 'Accepted'
+WHERE MatchRequestID = 2;
+
+UPDATE MatchRequest
+SET Response = 'Accepted'
+WHERE MatchRequestID = 3;
+
+SELECT * FROM Matches;
+SELECT * FROM MatchToUserToGame;
+
+/* one of the players quits the game*/
+UPDATE MatchToUserToGame
+SET PlayerStatus = 'Quit'
+WHERE MatchID = 1 AND UserToGameID = 6;
+
+SELECT * FROM Matches;
 
 
 

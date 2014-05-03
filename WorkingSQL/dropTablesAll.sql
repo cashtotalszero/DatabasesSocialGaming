@@ -16,3 +16,5 @@ DROP TABLE Friends;
 DROP TABLE UserPrivate;
 DROP TABLE UserPublic;
 DROP TABLE RudeWord;
+
+SHOW tables;

@@ -915,6 +915,34 @@ BEGIN
 END;
 */
 
+/* Question 20 ################################################# */
+
+DROP PROCEDURE if exists CreateMatch;
+DELIMITER //
+CREATE PROCEDURE CreateMatch(UTGID INT, minPlayer INT, maxPlayer INT, matchnm VARCHAR(30))
+BEGIN 
+
+INSERT INTO Matches (Initiator, MinPlayers, MaxPlayers, MatchName)
+VALUES (UTGID, minPlayer, maxPlayer, matchnm);
+
+INSERT INTO MatchToUserToGame (MatchID, UserToGameID)
+VALUES (
+	(SELECT MatchID FROM Matches WHERE Initiator=UTGID AND MatchName=matchnm),
+	UTGID
+	);
+END; //
+DELIMITER ;
+
+
+DROP PROCEDURE if exists MatchRequesting;
+DELIMITER //
+CREATE PROCEDURE MatchRequesting(Sending INT, Receiving INT, mID INT)
+BEGIN 
+	INSERT INTO MatchRequest (SendingUTG, ReceivingUTG, MatchID)
+	VALUES (Sending, Receiving, mID);
+END; //
+DELIMITER ;
+
 /* TRIGGERS */
 
 /* Triggers for Game relation  */
@@ -1053,13 +1081,32 @@ AFTER UPDATE ON MatchRequest
 FOR EACH ROW
 BEGIN 
 	/* if response is accepted, then the usertogame is added to the match*/
+	SET @num = (SELECT NoOfPlayer FROM Matches WHERE Matches.MatchID = NEW.MatchID);
 	IF NEW.Response = 'Accepted' 
 	THEN BEGIN 
 		INSERT INTO MatchToUserToGame (MatchID, UserToGameID)
 		VALUES(NEW.MatchID, NEW.ReceivingUTG);
 		UPDATE Matches 
-		SET NoOfPlayer = (SELECT NoOfPlayer FROM Matches WHERE MatchID = NEW.MatchID) + 1
+		SET NoOfPlayer = @num + 1
 		WHERE MatchID = New.MatchID;
+	END; END IF;
+
+END $$
+DELIMITER ;
+
+/* AFTER UPDATE on UserTogametomatch */
+DELIMITER $$
+CREATE TRIGGER matchtousertogame_after_update 
+AFTER UPDATE ON MatchToUserToGame
+FOR EACH ROW
+BEGIN 
+	
+	SET @num = (SELECT NoOfPlayer FROM Matches WHERE Matches.MatchID = NEW.MatchID);
+	IF NEW.PlayerStatus = 'Quit' 
+	THEN BEGIN
+		UPDATE Matches
+		SET NoOfPlayer =  @num - 1
+		WHERE MatchID = NEW.MatchID;
 	END; END IF;
 
 END $$
