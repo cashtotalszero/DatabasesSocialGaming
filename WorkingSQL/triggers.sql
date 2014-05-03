@@ -211,36 +211,6 @@ QUESTION 7:
 Procedure adds daily and weekly leaderboards for each game showing the best scores
 acheived.
 
-See question7.sql for an example query.
-
-Author: Will Woodhead
-
-*/
-DROP PROCEDURE IF EXISTS DayAndWeekLeaders;
-DELIMITER $$
-CREATE PROCEDURE DayAndWeekLeaders()
-BEGIN 
-
-	SET @gameCount = (SELECT COUNT(GameID) FROM Game);
-	SET @index = 1;
-
-	WHILE( @index <= @gameCount) 
-	DO
-		INSERT INTO Leaderboard (GameID, SortOrder, TimePeriod)
-		VALUES (
-			@index, 
-			(SELECT SortOrder FROM Game WHERE GameID = @index),'1_week'
-		);
-		INSERT INTO Leaderboard (GameID, SortOrder, TimePeriod)
-		VALUES (
-			@index, 
-			(SELECT SortOrder FROM Game WHERE GameID = @index),'1_day'
-		);
-		SET @index = @index + 1;
-	END WHILE ;
-
-END; $$
-DELIMITER ;
 
 /*
 QUESTION 8:
@@ -956,6 +926,18 @@ BEGIN
 			FROM Game 
 			WHERE Game.GameID = NEW.GameID)
 	);
+	INSERT INTO Leaderboard (GameID, SortOrder, TimePeriod)
+		VALUES (
+			NEW.GameID, 
+			(SELECT SortOrder FROM Game WHERE GameID = NEW.GameID),
+			'1_week'
+		);
+		INSERT INTO Leaderboard (GameID, SortOrder, TimePeriod)
+		VALUES (
+			NEW.GameID, 
+			(SELECT SortOrder FROM Game WHERE GameID = NEW.GameID),
+			'1_day'
+		);
 END $$
 DELIMITER ;
 
