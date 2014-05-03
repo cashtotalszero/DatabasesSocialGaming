@@ -67,7 +67,6 @@ BEGIN
 					AND UserToGame.GameID = updated)
 				WHERE Game.GameID = updated;
 		END; END IF;
-
 END $$
 DELIMITER ; 
 
@@ -163,7 +162,6 @@ the score is reset to the min score value.
 
 This function is called by a triggers: 
 - Before any UPDATE or INSERT on the UserToGame relation (which holds the LastScore attribute) 
-- Before any UPDATE or INSERT on the Scores relation.
 
 Author: Alex Parrott
  */
@@ -332,11 +330,31 @@ END; $$
 DELIMITER ;
 
 /*
-
 QUESTION 10:
 
-See triggers section below.
+The following procedures can be used to create Friendships via a friendship
+request. A friend request can be made by calling the RequestFriendName procedure
+providing the UserNames of the requesterand the requested friend:
 
+CALL RequestFriendName('AlexParrott,'WillWoodhead');
+
+Alternatively the requested friend's email can be used by calling the RequestFriendEmail
+procedure:
+
+CALL RequestFriendEmail('AlexParrott','Will@Woodhead.com');
+
+To accept a friendship the AcceptFriendship procedure must be called providing
+the unique ResquestID, this automatically creates the friendship in the Friends
+relation:
+
+CALL AcceptFriendship(4);
+
+Friend requests can be declined and friendships can be deleted by calling the
+DenyFriendship procedure (again providing a unique ResquestID):
+
+CALL DenyFriendship(7);
+
+Author: Alex Parrott
 */
 
 /* Procedure creates a Friendship Request via UserName */
@@ -396,7 +414,6 @@ BEGIN
 	/* Create this friendship in the Friends table */
 	INSERT INTO Friends(AccHolder,Friend) VALUES (Friend1,Friend2);
 	INSERT INTO Friends(AccHolder,Friend) VALUES (Friend2,Friend1);
-
 END; $$
 DELIMITER ;
 
@@ -634,6 +651,7 @@ PROCEDURE to show a users status screen
 
 See question14.sql for example queries and tests.
 
+Author: James Hamblion
 */
 DROP PROCEDURE IF EXISTS ShowStatusScreen;
 DELIMITER $$
@@ -1026,46 +1044,6 @@ BEGIN
 END $$
 DELIMITER ; 
 
-/* Alex THESE TRIGGERS DOES NOT WORK AT PRESENT  */
-/* TRIGGERS FOR Scores relation 
-/* BEFORE INSERT on Scores 
-DROP TRIGGER IF EXISTS BeforeInsertScores;
-DELIMITER $$
-CREATE TRIGGER BeforeInsertScores 
-BEFORE INSERT ON Scores
-FOR EACH ROW 
-BEGIN
-	/* QUESTION 6 
-	SET NEW.Score = (
-		SELECT CatchCheaters(
-			(SELECT GameID
-			FROM UserToGame, Scores
-			WHERE ID = UserToGameID
-			AND UserToGameID = NEW.UserToGameID
-			),
-			NEW.Score));
-END $$
-DELIMITER ;
-
-/* BEFORE UPDATE to Scores 
-DROP TRIGGER IF EXISTS BeforeUpdateScores;
-DELIMITER $$
-CREATE TRIGGER BeforeUpdateScores 
-BEFORE UPDATE ON Scores
-FOR EACH ROW 
-BEGIN
-	/* QUESTION 6 
-	SET NEW.Score = (
-		SELECT CatchCheaters(
-			(SELECT GameID
-			FROM UserToGame,Scores
-			WHERE ID = UserToGameID
-			AND UserToGameID = NEW.UserToGameID
-			),
-			NEW.Score));
-END $$
-DELIMITER ;*/
-
 /* TRIGGERS FOR MatchRequest RELATION */
 
 /* AFTER UPDATE on MatchRequest */
@@ -1079,56 +1057,11 @@ BEGIN
 	THEN BEGIN 
 		INSERT INTO MatchToUserToGame (MatchID, UserToGameID)
 		VALUES(NEW.MatchID, NEW.ReceivingUTG);
+		UPDATE Matches 
+		SET NoOfPlayer = (SELECT NoOfPlayer FROM Matches WHERE MatchID = NEW.MatchID) + 1
+		WHERE MatchID = New.MatchID;
 	END; END IF;
 
 END $$
 DELIMITER ;
-
-/* TRIGGERS FOR FriendRequest & Friends RELATIONS */
-
-/* QUESTION 10:
-
-The following triggers generate friendships upon acceptance of a friend request.
-See question10.sql for a detailed explanation.
-
-Author: Alex Parrott
-
-
-DELIMITER $$
-CREATE TRIGGER createFriendship 
-AFTER UPDATE ON FriendRequest
-FOR EACH ROW
-BEGIN
-	IF (NEW.FriendResponse = 'Accepted')
-	THEN BEGIN
-		INSERT INTO Friends VALUES (
-			NEW.Requester,NEW.Requestee
-	);
-	END; END IF;
-END; $$
-DELIMITER ;
-
-/* Creates matching friendships in Friends2 
-DELIMITER $$
-CREATE TRIGGER createMatchingFriend 
-AFTER INSERT ON Friends
-FOR EACH ROW
-BEGIN
-	INSERT INTO Friends2 VALUES(
-		NEW.Friend,NEW.AccHolder);    
-END; $$
-DELIMITER ;
-
-/* Deletes matching friendships in Friends2 
-DELIMITER $$
-CREATE TRIGGER deleteMatchingFriend 
-AFTER DELETE ON Friends
-FOR EACH ROW 
-BEGIN
-	DELETE FROM Friends2 
-	WHERE AccHolder = OLD.Friend 
-	AND Friend = OLD.AccHolder;
-END $$
-DELIMITER ; 
-*/
 

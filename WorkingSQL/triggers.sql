@@ -242,10 +242,6 @@ BEGIN
 END; $$
 DELIMITER ;
 
-/* JAMES THIS PROCEDURE DOES NOT WORK AT PRESENT 
-linked trigger below has also been commented out for this reason
-*/
-
 /*
 QUESTION 8:
 
@@ -259,8 +255,9 @@ See question8.sql for an exmple query.
 
 Author: James Hamblion
 */
-/*
+
 DROP FUNCTION IF EXISTS isUserNameRude;
+DELIMITER $$
 CREATE FUNCTION isUserNameRude(usrname VARCHAR(50))
 RETURNS INT
 BEGIN
@@ -273,15 +270,15 @@ BEGIN
 	OPEN cur;
 	compare_loop: LOOP
 		FETCH cur INTO cmpWord;
-		-- Build search text 
+		/* Build search text */
 		SET @searchtxt ='%';
 		SET @searchtxt = @searchtxt + cmpWord;
 		SET @SearchText = @SearchText + '%';
-		-- Handler check  
+		/* Handler check */
 	    IF done THEN
 			LEAVE compare_loop;
 	    END IF;
-		-- Word comparison check (Note STRCMP case insensitive by default) 
+		/* Word comparison check (Note STRCMP case insensitive by default) */ 
 		SET obscene = STRCMP(@usrname, @searchtxt);
 		IF obscene 
 		THEN
@@ -290,8 +287,8 @@ BEGIN
 	END LOOP;
 	CLOSE cur;
 	RETURN obscene;
-END;
-*/
+END; $$
+DELIMITER ;
 
 /*
 QUESTION 9:
@@ -899,10 +896,8 @@ DELIMITER ;
 /*
 UserPublic triggers
 */
-
-/* JAMES THIS TRIGGER DOES NOT WORK AT PRESENT linked to inoperative q8 procedure */
-/*
 DROP TRIGGER IF EXISTS userNameEntryCheck;
+DELIMITER $$
 CREATE TRIGGER userNameEntryCheck
 BEFORE INSERT ON UserPublic
 FOR EACH ROW
@@ -912,8 +907,8 @@ BEGIN
 	IF @obscene THEN
 		SET NEW.AccountStatus := 'Locked';
 	END IF;
-END;
-*/
+END; $$
+DELIMITER ;
 
 /* Question 20 ################################################# */
 

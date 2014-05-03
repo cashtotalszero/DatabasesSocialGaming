@@ -18,9 +18,6 @@ BEGIN
 END; $$
 DELIMITER ;
 
-CALL RequestFriendName('JamesHamblion','ScarlettJo');
-CALL RequestFriendEmail('ScarlettJo','Will@Woodhead.com');
-
 DROP PROCEDURE IF EXISTS AcceptFriendship;
 DELIMITER $$
 CREATE PROCEDURE AcceptFriendship(IN reqID INT)
@@ -28,6 +25,7 @@ BEGIN
 	DECLARE Friend1 VARCHAR(20);
 	DECLARE Friend2 VARCHAR(30);
 
+	/* Assign UserNames to friends */
 	SET Friend1 = (
 		SELECT Requester
 		FROM FriendRequest
@@ -36,6 +34,7 @@ BEGIN
 		SELECT Requestee
 		FROM FriendRequest
 		WHERE RequestID = reqID);
+	/* If Email is used for request then get the UserName */
 	IF Friend2 IS NULL
 	THEN
 		SET Friend2 = (
@@ -67,6 +66,7 @@ BEGIN
 	DECLARE Friend1 VARCHAR(20);
 	DECLARE Friend2 VARCHAR(30);
 
+	/* Assign UserNames to friends */
 	SET Friend1 = (
 		SELECT Requester
 		FROM FriendRequest
@@ -77,6 +77,7 @@ BEGIN
 		FROM FriendRequest
 		WHERE RequestID = reqID
 	);
+	/* If Email is used for request then get the UserName */
 	IF Friend2 IS NULL
 	THEN
 		SET Friend2 = (
@@ -94,7 +95,6 @@ BEGIN
 	SET FriendResponse = 'Denied'
 	WHERE RequestID = reqID;
 
- 
 	/* Delete this friendship from the Friends table */
 	DELETE FROM Friends 
 	WHERE AccHolder = Friend1
@@ -105,4 +105,3 @@ BEGIN
 END; $$
 DELIMITER ;
 
-CALL AcceptFriendShip(1);
