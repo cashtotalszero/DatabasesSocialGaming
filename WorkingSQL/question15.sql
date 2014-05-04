@@ -66,30 +66,5 @@ BEGIN
 	--Display results and then drop the table as no longer needed.
 	SELECT * FROM GameAchievementList;
 	DROP TABLE GameAchievementList;
-END;	//
+END	//
 DELIMITER ;
-
-
---Testing (ignore!):
---Strategy:
-	--get earnt achievement table
-	--get all achievement table
-	--outer join earnt with all on achievement id to get all required columns
-	--filter out hidden and not earnt
---Earnt achievements e.g. Will's earnt for Fifa (gameid = 3)
-SELECT * FROM AchievementToUserToGame a
-WHERE a.userToGameid IN (SELECT ID FROM UserToGame u WHERE u.UserName = 'WillWoodhead' AND u.gameID = 3)
---All achievements for a game
-SELECT * FROM Achievement a
-WHERE a.gameid = 3;
---Outer join earnt with all on achievement id to get all required columns
-SELECT * FROM 
-	(SELECT * FROM Achievement x WHERE x.gameid = 3) a LEFT OUTER JOIN
-	(SELECT * FROM AchievementToUserToGame y 
-	 WHERE y.userToGameid IN 
-		(SELECT ID FROM UserToGame u WHERE u.UserName = 'WillWoodhead' AND u.gameID = 3)) b
-ON a.achievementID = b.achievementID
-WHERE (b.dateGained IS NULL AND a.hiddenFlag = FALSE) OR
-	(a.hiddenFlag = FALSE) OR
-	(b.dateGained IS NOT NULL AND a.hiddenFlag = TRUE)
-ORDER BY b.dateGained DESC;

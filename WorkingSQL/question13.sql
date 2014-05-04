@@ -49,56 +49,5 @@ BEGIN
 	ELSE
 		SELECT 'Error: game not owned by user!';
 	END IF;
-END;	//
+END	//
 DELIMITER ;
-
-
---Testing
-SELECT CONCAT('hELLO!', ' Bob');
-
-SELECT COUNT(achievementID) FROM Achievement A
-WHERE A.gameid = 1;
-
-SELECT id FROM UserToGame utg
-WHERE utg.UserName = 'AlexParrott' AND gameid = 1;
-
-SELECT COUNT(achievementID) FROM AchievementToUserToGame a
-WHERE a.userToGameID = 2;
-
-SELECT SUM(PointValue) FROM Achievement a, AchievementToUserToGame b
-WHERE b.userToGameid = 2 AND a.achievementID = b.achievementID
-	AND a.gameid = 1;
-
---Null tests
-SET @nulltest = 1;
-SELECT @nulltest;
-
-SET @test = NULL;
-IF (@test IS NULL) THEN
-	SELECT 'Error: game not owned by user!';
-END IF;
-
-SET @bal = 150;
-IF (@bal < 250) THEN SET @bal = 250;
-	--SELECT @bal;
-END IF;
-
-SET @nulltest = (SELECT id FROM UserToGame utg
-			 WHERE utg.UserName = 'WillWoodhead' AND gameid = 3);
-IF (@nulltest IS NULL) THEN
-	SELECT 'Error: game not owned by user!';
-END IF;
-SELECT @nulltest;
-
-SET @obscene = TRUE;
-IF @obscene THEN
-SET @obscene = FALSE;
-END IF;
-SELECT @obscene;
-
-SET @bal = 150;
-IF (@bal < 250) THEN SET @bal = 250;
-	--SELECT @bal;
-END IF;
-
-SELECT VERSION();

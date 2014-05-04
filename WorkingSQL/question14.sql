@@ -44,11 +44,5 @@ BEGIN
 		SELECT * FROM Status_Screen;
 		DROP TABLE Status_Screen;
 	END IF;
-END;	//
+END	//
 DELIMITER ;
-
-
---Query Tests
-SELECT SUM(PointValue) FROM Achievement a, AchievementToUserToGame b
-WHERE b.userToGameid IN (SELECT ID FROM UserToGame u WHERE u.UserName = 'AlexParrott')
-	 AND a.achievementID = b.achievementID;
