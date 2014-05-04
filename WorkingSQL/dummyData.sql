@@ -362,19 +362,19 @@ INSERT INTO RudeWord
 
 /* Creating friendships */
 /* (1) Create requests */
-CALL RequestFriendName('AlexParrott', 'ScarlettJo',FALSE);
-CALL RequestFriendName('AlexParrott', 'WillWoodhead',FALSE);
-CALL RequestFriendName('AlexParrott', 'JamesHamblion',FALSE);
-CALL RequestFriendName('BobHope', 'JamesHamblion',FALSE);
-CALL RequestFriendName('JamesHamblion', 'BarackObama',FALSE);
-CALL RequestFriendName('ScarlettJo', 'GeorgeClooney',FALSE);
-CALL RequestFriendName('ScarlettJo', 'WillWoodhead',FALSE);
-CALL RequestFriendName('ScarlettJo', 'BradPitt',FALSE);
-CALL RequestFriendName('BradPitt', 'BobHope',FALSE);
-CALL RequestFriendName('BradPitt', 'GeorgeClooney',FALSE);
-CALL RequestFriendName('DavidCameron', 'WillWoodhead',FALSE);
-CALL RequestFriendName('DavidCameron', 'AlexParrott',FALSE);
-CALL RequestFriendName('AliceInWonderland', 'GeorgeClooney',FALSE);
+CALL CreateRequest('AlexParrott','ScarlettJo',FALSE,FALSE);
+CALL CreateRequest('AlexParrott','WillWoodhead',FALSE,FALSE);
+CALL CreateRequest('AlexParrott','JamesHamblion',FALSE,FALSE);
+CALL CreateRequest('BobHope','JamesHamblion',FALSE,FALSE);
+CALL CreateRequest('JamesHamblion','BarackObama',FALSE,FALSE);
+CALL CreateRequest('ScarlettJo','GeorgeClooney',FALSE,FALSE);
+CALL CreateRequest('ScarlettJo','WillWoodhead',FALSE,FALSE);
+CALL CreateRequest('ScarlettJo','BradPitt',FALSE,FALSE);
+CALL CreateRequest('BradPitt','BobHope',FALSE,FALSE);
+CALL CreateRequest('BradPitt','GeorgeClooney',FALSE,FALSE);
+CALL CreateRequest('DavidCameron','WillWoodhead',FALSE,FALSE);
+CALL CreateRequest('DavidCameron','AlexParrott',FALSE,FALSE);
+CALL CreateRequest('AliceInWonderland','GeorgeClooney',FALSE,FALSE);
 
 /* (2) Accept all requests */
 UPDATE FriendRequest

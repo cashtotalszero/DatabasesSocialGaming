@@ -210,7 +210,7 @@ QUESTION 7:
 
 Procedure adds daily and weekly leaderboards for each game showing the best scores
 acheived.
-
+*/
 
 /*
 QUESTION 8:
@@ -323,23 +323,36 @@ Author: Alex Parrott
 */
 
 /* Procedure creates a Friendship Request via UserName */
-DROP PROCEDURE IF EXISTS RequestFriendName;
+DROP PROCEDURE IF EXISTS CreateRequest;
 DELIMITER $$
-CREATE PROCEDURE RequestFriendName(IN User VARCHAR(20),reqFriend VARCHAR(20),deleteFlag INT)
+CREATE PROCEDURE CreateRequest(IN User VARCHAR(20),reqFriend VARCHAR(30),deleteFlag INT,emailFlag INT)
 BEGIN
-	IF deleteFlag
+	/* Action friendships to delete */
+	IF (deleteFlag)
 	THEN
-		INSERT INTO FriendRequest(Requester,Requestee,Response)
-		VALUES(User,reqFriend,'Declined');
-		/*CALL ProcessRequest(SELECT MAX(RequestID) FROM FriendRequest);*/
+		IF (emailFlag)
+		THEN
+			INSERT INTO FriendRequest(Requester,Email,Response)
+			VALUES(User,reqFriend,'Declined');
+		ELSE
+			INSERT INTO FriendRequest(Requester,Requestee,Response)
+			VALUES(User,reqFriend,'Declined');
+		END IF;
+	/* Action new friendship requests */
 	ELSE
-		INSERT INTO FriendRequest(Requester,Requestee)
-		VALUES(User,reqFriend);
+		IF (emailFlag)
+		THEN
+			INSERT INTO FriendRequest(Requester,Email)
+			VALUES(User,reqFriend);
+		ELSE
+			INSERT INTO FriendRequest(Requester,Requestee)
+			VALUES(User,reqFriend);
+		END IF;
 	END IF;
 END; $$
 DELIMITER ;
 
-/* Alternative procedure creates a Friendship Request via Email address */
+/* Alternative procedure creates a Friendship Request via Email address
 DROP PROCEDURE IF EXISTS RequestFriendEmail;
 DELIMITER $$
 CREATE PROCEDURE RequestFriendEmail(IN User VARCHAR(20),reqEmail VARCHAR(30),deleteFlag INT)
@@ -348,14 +361,13 @@ BEGIN
 	THEN
 		INSERT INTO FriendRequest(Requester,Email,Response)
 		VALUES(User,reqEmail,'Declined');
-		/*CALL ProcessRequest(SELECT MAX(RequestID) FROM FriendRequest);*/
 	ELSE
 		INSERT INTO FriendRequest(Requester,Email)
 		VALUES(User,reqEmail);
 	END IF;
 END; $$
 DELIMITER ;
-
+*/
 DROP PROCEDURE IF EXISTS ProcessRequest;
 DELIMITER $$
 CREATE PROCEDURE ProcessRequest(IN reqID INT)
