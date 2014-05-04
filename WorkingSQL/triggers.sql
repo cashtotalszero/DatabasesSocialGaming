@@ -299,6 +299,8 @@ DELIMITER ;
 /*
 QUESTION 10:
 
+THIS NEEDS RE_WORDING....
+
 The following procedures can be used to create Friendships via a friendship
 request. A friend request can be made by calling the RequestFriendName procedure
 providing the UserNames of the requesterand the requested friend:
@@ -314,12 +316,8 @@ To accept a friendship the AcceptFriendship procedure must be called providing
 the unique ResquestID, this automatically creates the friendship in the Friends
 relation:
 
-CALL AcceptFriendship(4);
+CALL ProcessFriendship(4);
 
-Friend requests can be declined and friendships can be deleted by calling the
-DenyFriendship procedure (again providing a unique ResquestID):
-
-CALL DenyFriendship(7);
 
 Author: Alex Parrott
 */
@@ -327,26 +325,40 @@ Author: Alex Parrott
 /* Procedure creates a Friendship Request via UserName */
 DROP PROCEDURE IF EXISTS RequestFriendName;
 DELIMITER $$
-CREATE PROCEDURE RequestFriendName(IN User VARCHAR(20),reqFriend VARCHAR(20))
+CREATE PROCEDURE RequestFriendName(IN User VARCHAR(20),reqFriend VARCHAR(20),deleteFlag INT)
 BEGIN
-	INSERT INTO FriendRequest(Requester,Requestee)
-	VALUES(User,reqFriend);
+	IF deleteFlag
+	THEN
+		INSERT INTO FriendRequest(Requester,Requestee,Response)
+		VALUES(User,reqFriend,'Declined');
+		/*CALL ProcessRequest(SELECT MAX(RequestID) FROM FriendRequest);*/
+	ELSE
+		INSERT INTO FriendRequest(Requester,Requestee)
+		VALUES(User,reqFriend);
+	END IF;
 END; $$
 DELIMITER ;
 
 /* Alternative procedure creates a Friendship Request via Email address */
 DROP PROCEDURE IF EXISTS RequestFriendEmail;
 DELIMITER $$
-CREATE PROCEDURE RequestFriendEmail(IN User VARCHAR(20),reqEmail VARCHAR(30))
+CREATE PROCEDURE RequestFriendEmail(IN User VARCHAR(20),reqEmail VARCHAR(30),deleteFlag INT)
 BEGIN
-	INSERT INTO FriendRequest(Requester,Email)
-	VALUES(User,reqEmail);
+	IF deleteFlag
+	THEN
+		INSERT INTO FriendRequest(Requester,Email,Response)
+		VALUES(User,reqEmail,'Declined');
+		/*CALL ProcessRequest(SELECT MAX(RequestID) FROM FriendRequest);*/
+	ELSE
+		INSERT INTO FriendRequest(Requester,Email)
+		VALUES(User,reqEmail);
+	END IF;
 END; $$
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS ProcessFriendship;
+DROP PROCEDURE IF EXISTS ProcessRequest;
 DELIMITER $$
-CREATE PROCEDURE ProcessFriendship(IN reqID INT)
+CREATE PROCEDURE ProcessRequest(IN reqID INT)
 BEGIN
 	DECLARE Friend1 VARCHAR(20);
 	DECLARE Friend2 VARCHAR(30);
@@ -404,53 +416,7 @@ BEGIN
 	END IF;
 END; $$
 DELIMITER ;
-/*
-DROP PROCEDURE IF EXISTS DenyFriendship;
-DELIMITER $$
-CREATE PROCEDURE DenyFriendship(IN reqID INT)
-BEGIN
-	DECLARE Friend1 VARCHAR(20);
-	DECLARE Friend2 VARCHAR(30);
 
-	/* Assign UserNames to friends 
-	SET Friend1 = (
-		SELECT Requester
-		FROM FriendRequest
-		WHERE RequestID = reqID
-	);
-	SET Friend2 = (
-		SELECT Requestee
-		FROM FriendRequest
-		WHERE RequestID = reqID
-	);
-	/* If Email is used for request then get the UserName 
-	IF Friend2 IS NULL
-	THEN
-		SET Friend2 = (
-			SELECT UserName
-			FROM UserPrivate
-			WHERE Email = (
-				SELECT Email
-				FROM FriendRequest
-				WHERE RequestID = reqID)
-		);
-	END IF;
-
-	/* Delete the request 
-	DELETE FROM FriendRequest
-	WHERE RequestID = ReqID;
-
-	/* Delete this friendship from the Friends table 
-	DELETE FROM Friends 
-	WHERE AccHolder = Friend1
-	AND Friend = Friend2;
-	DELETE FROM Friends
-	WHERE AccHolder = Friend2
-	AND Friend = Friend1;
-
-END; $$
-DELIMITER ;
-*/
 /*
 QUESTION 11:
 

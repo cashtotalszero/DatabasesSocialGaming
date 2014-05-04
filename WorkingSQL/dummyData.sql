@@ -360,40 +360,40 @@ INSERT INTO RudeWord
 INSERT INTO RudeWord
 	VALUES ('cunt'), ('tosser');
 
-/* Create friendships */
-/* (1) Make requests */
-CALL RequestFriendName('AlexParrott', 'ScarlettJo');
-CALL RequestFriendName('AlexParrott', 'WillWoodhead');
-CALL RequestFriendName('AlexParrott', 'JamesHamblion');
-CALL RequestFriendName('BobHope', 'JamesHamblion');
-CALL RequestFriendName('JamesHamblion', 'BarackObama');
-CALL RequestFriendName('ScarlettJo', 'GeorgeClooney');
-CALL RequestFriendName('ScarlettJo', 'WillWoodhead');
-CALL RequestFriendName('ScarlettJo', 'BradPitt');
-CALL RequestFriendName('BradPitt', 'BobHope');
-CALL RequestFriendName('BradPitt', 'GeorgeClooney');
-CALL RequestFriendName('DavidCameron', 'WillWoodhead');
-CALL RequestFriendName('DavidCameron', 'AlexParrott');
-CALL RequestFriendName('AliceInWonderland', 'GeorgeClooney');
+/* Creating friendships */
+/* (1) Create requests */
+CALL RequestFriendName('AlexParrott', 'ScarlettJo',FALSE);
+CALL RequestFriendName('AlexParrott', 'WillWoodhead',FALSE);
+CALL RequestFriendName('AlexParrott', 'JamesHamblion',FALSE);
+CALL RequestFriendName('BobHope', 'JamesHamblion',FALSE);
+CALL RequestFriendName('JamesHamblion', 'BarackObama',FALSE);
+CALL RequestFriendName('ScarlettJo', 'GeorgeClooney',FALSE);
+CALL RequestFriendName('ScarlettJo', 'WillWoodhead',FALSE);
+CALL RequestFriendName('ScarlettJo', 'BradPitt',FALSE);
+CALL RequestFriendName('BradPitt', 'BobHope',FALSE);
+CALL RequestFriendName('BradPitt', 'GeorgeClooney',FALSE);
+CALL RequestFriendName('DavidCameron', 'WillWoodhead',FALSE);
+CALL RequestFriendName('DavidCameron', 'AlexParrott',FALSE);
+CALL RequestFriendName('AliceInWonderland', 'GeorgeClooney',FALSE);
 
 /* (2) Accept all requests */
 UPDATE FriendRequest
 SET Response = 'Accepted';
 
 /* (3) Action requests */
-CALL ProcessFriendship(1);
-CALL ProcessFriendship(2);
-CALL ProcessFriendship(3);
-CALL ProcessFriendship(4);
-CALL ProcessFriendship(5);
-CALL ProcessFriendship(6);
-CALL ProcessFriendship(7);
-CALL ProcessFriendship(8);
-CALL ProcessFriendship(9);
-CALL ProcessFriendship(10);
-CALL ProcessFriendship(11);
-CALL ProcessFriendship(12);
-CALL ProcessFriendship(13);
+CALL ProcessRequest(1);
+CALL ProcessRequest(2);
+CALL ProcessRequest(3);
+CALL ProcessRequest(4);
+CALL ProcessRequest(5);
+CALL ProcessRequest(6);
+CALL ProcessRequest(7);
+CALL ProcessRequest(8);
+CALL ProcessRequest(9);
+CALL ProcessRequest(10);
+CALL ProcessRequest(11);
+CALL ProcessRequest(12);
+CALL ProcessRequest(13);
 
 /* Populate plays & scores relations */
 DROP PROCEDURE if exists populatePlays;
