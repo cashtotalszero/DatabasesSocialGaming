@@ -344,9 +344,9 @@ BEGIN
 END; $$
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS AcceptFriendship;
+DROP PROCEDURE IF EXISTS ProcessFriendship;
 DELIMITER $$
-CREATE PROCEDURE AcceptFriendship(IN reqID INT)
+CREATE PROCEDURE ProcessFriendship(IN reqID INT)
 BEGIN
 	DECLARE Friend1 VARCHAR(20);
 	DECLARE Friend2 VARCHAR(30);
@@ -373,17 +373,38 @@ BEGIN
 		);
 	END IF;
 
-	/* Update the friend request to Accepted */
-	UPDATE FriendRequest
-	SET FriendResponse = 'Accepted'
-	WHERE RequestID = reqID;
- 
-	/* Create this friendship in the Friends table */
-	INSERT INTO Friends(AccHolder,Friend) VALUES (Friend1,Friend2);
-	INSERT INTO Friends(AccHolder,Friend) VALUES (Friend2,Friend1);
+	/* Delete any completed requests */
+	DELETE FROM FriendRequest
+	WHERE Response = 'Completed';
+
+	/* Delete any friendships for unwanted friendships */
+	IF (SELECT Response FROM FriendRequest WHERE RequestID = reqID) = 'Declined'
+	THEN	
+		DELETE FROM Friends 
+		WHERE AccHolder = Friend1
+		AND Friend = Friend2;
+		DELETE FROM Friends
+		WHERE AccHolder = Friend2
+		AND Friend = Friend1;
+	END IF;
+	/* Create new friendship for any accepted friend requests */
+	IF (SELECT Response FROM FriendRequest WHERE RequestID = reqID) = 'Accepted'
+	THEN	
+		INSERT INTO Friends(AccHolder,Friend) 
+		VALUES (Friend1,Friend2);
+		INSERT INTO Friends(AccHolder,Friend) 
+		VALUES (Friend2,Friend1);
+	END IF;
+	/* Change response status to complete for all actioned requests */
+	IF (SELECT Response FROM FriendRequest WHERE RequestID = reqID) <> 'Pending'
+	THEN
+		UPDATE FriendRequest
+		SET Response = 'Completed'
+		WHERE RequestID = reqID;
+	END IF;
 END; $$
 DELIMITER ;
-
+/*
 DROP PROCEDURE IF EXISTS DenyFriendship;
 DELIMITER $$
 CREATE PROCEDURE DenyFriendship(IN reqID INT)
@@ -391,7 +412,7 @@ BEGIN
 	DECLARE Friend1 VARCHAR(20);
 	DECLARE Friend2 VARCHAR(30);
 
-	/* Assign UserNames to friends */
+	/* Assign UserNames to friends 
 	SET Friend1 = (
 		SELECT Requester
 		FROM FriendRequest
@@ -402,7 +423,7 @@ BEGIN
 		FROM FriendRequest
 		WHERE RequestID = reqID
 	);
-	/* If Email is used for request then get the UserName */
+	/* If Email is used for request then get the UserName 
 	IF Friend2 IS NULL
 	THEN
 		SET Friend2 = (
@@ -415,21 +436,21 @@ BEGIN
 		);
 	END IF;
 
-	/* Update the friend request to Denied */
-	UPDATE FriendRequest
-	SET FriendResponse = 'Denied'
-	WHERE RequestID = reqID;
+	/* Delete the request 
+	DELETE FROM FriendRequest
+	WHERE RequestID = ReqID;
 
-	/* Delete this friendship from the Friends table */
+	/* Delete this friendship from the Friends table 
 	DELETE FROM Friends 
 	WHERE AccHolder = Friend1
 	AND Friend = Friend2;
 	DELETE FROM Friends
 	WHERE AccHolder = Friend2
 	AND Friend = Friend1;
+
 END; $$
 DELIMITER ;
-
+*/
 /*
 QUESTION 11:
 

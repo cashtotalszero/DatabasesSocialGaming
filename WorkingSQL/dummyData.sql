@@ -361,6 +361,7 @@ INSERT INTO RudeWord
 	VALUES ('cunt'), ('tosser');
 
 /* Create friendships */
+/* (1) Make requests */
 CALL RequestFriendName('AlexParrott', 'ScarlettJo');
 CALL RequestFriendName('AlexParrott', 'WillWoodhead');
 CALL RequestFriendName('AlexParrott', 'JamesHamblion');
@@ -374,19 +375,25 @@ CALL RequestFriendName('BradPitt', 'GeorgeClooney');
 CALL RequestFriendName('DavidCameron', 'WillWoodhead');
 CALL RequestFriendName('DavidCameron', 'AlexParrott');
 CALL RequestFriendName('AliceInWonderland', 'GeorgeClooney');
-CALL AcceptFriendship(1);
-CALL AcceptFriendship(2);
-CALL AcceptFriendship(3);
-CALL AcceptFriendship(4);
-CALL AcceptFriendship(5);
-CALL AcceptFriendship(6);
-CALL AcceptFriendship(7);
-CALL AcceptFriendship(8);
-CALL AcceptFriendship(9);
-CALL AcceptFriendship(10);
-CALL AcceptFriendship(11);
-CALL AcceptFriendship(12);
-CALL AcceptFriendship(13);
+
+/* (2) Accept all requests */
+UPDATE FriendRequest
+SET Response = 'Accepted';
+
+/* (3) Action requests */
+CALL ProcessFriendship(1);
+CALL ProcessFriendship(2);
+CALL ProcessFriendship(3);
+CALL ProcessFriendship(4);
+CALL ProcessFriendship(5);
+CALL ProcessFriendship(6);
+CALL ProcessFriendship(7);
+CALL ProcessFriendship(8);
+CALL ProcessFriendship(9);
+CALL ProcessFriendship(10);
+CALL ProcessFriendship(11);
+CALL ProcessFriendship(12);
+CALL ProcessFriendship(13);
 
 /* Populate plays & scores relations */
 DROP PROCEDURE if exists populatePlays;
