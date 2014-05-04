@@ -299,25 +299,9 @@ DELIMITER ;
 /*
 QUESTION 10:
 
-THIS NEEDS RE_WORDING....
 
-The following procedures can be used to create Friendships via a friendship
-request. A friend request can be made by calling the RequestFriendName procedure
-providing the UserNames of the requesterand the requested friend:
-
-CALL RequestFriendName('AlexParrott,'WillWoodhead');
-
-Alternatively the requested friend's email can be used by calling the RequestFriendEmail
-procedure:
-
-CALL RequestFriendEmail('AlexParrott','Will@Woodhead.com');
-
-To accept a friendship the AcceptFriendship procedure must be called providing
-the unique ResquestID, this automatically creates the friendship in the Friends
-relation:
-
-CALL ProcessFriendship(4);
-
+NOTE: Game invites are dealt with by the Matches relations (see question 20) 
+and are therefore not included here.
 
 Author: Alex Parrott
 */
