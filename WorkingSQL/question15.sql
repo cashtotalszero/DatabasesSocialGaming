@@ -1,12 +1,13 @@
 /* QUESTION 15 */
 --Procedure call tests
 CALL ListUserGameAchievements('WillWoodhead', 3);
+
 --Output:
---Title	PointValue	Description	DateGained
+--Title	PointValue	Description				DateGained
 --Goalie Scorer	20	Scored with your goal keeper	2014-02-12
 --Always Friendly	20	Crossed for a Friend to score	2013-12-13
---Fowler	10	Received 5 red cards in a game	2013-04-26
---Penalty guru	50	Win 50 games through penalties	<null>
+--Fowler			10	Received 5 red cards in a game2013-04-26
+--Penalty guru		50	Win 50 games through penalties<null>
 --Note: 'Post and in' achievement not shown because it is hidden and not earnt.
 
 /* PROCEDURE */
@@ -34,7 +35,7 @@ BEGIN
 	--The query to give everything needed:
 	DECLARE cur CURSOR FOR 
 		SELECT * FROM 
-			(SELECT * FROM Achievement x WHERE x.gameid = 3) a LEFT OUTER JOIN
+			(SELECT * FROM Achievement x WHERE x.gameid = gameident) a LEFT OUTER JOIN
 			(SELECT * FROM AchievementToUserToGame y 
 			 WHERE y.userToGameid IN 
 				(SELECT ID FROM UserToGame u WHERE u.UserName = usrname AND u.gameID = gameident)) b

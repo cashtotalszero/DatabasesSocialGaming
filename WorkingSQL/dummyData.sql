@@ -341,17 +341,20 @@ INSERT INTO Achievement
 
 /* Dummy values for AchievementToUserToGame table */
 INSERT INTO AchievementToUserToGame
-	VALUES (1, 2, '2014-1-1');
+	VALUES (1, 3, '2014-1-1');
 INSERT INTO AchievementToUserToGame
-	VALUES (2, 1, '2013-4-26');
+	VALUES (2, 4, '2013-4-26');
 INSERT INTO AchievementToUserToGame
-	VALUES (4, 5, '2013-4-26');
+	VALUES (4, 8, '2013-4-26');
 INSERT INTO AchievementToUserToGame
-	VALUES (5, 4, '2013-11-14');
+	VALUES (5, 1, '2013-11-14');
 INSERT INTO AchievementToUserToGame
-	VALUES (6, 5, '2013-12-13');
+	VALUES (6, 8, '2013-12-13');
 INSERT INTO AchievementToUserToGame
-	VALUES (7, 5, '2014-02-12');
+	VALUES (7, 8, '2014-02-12');
+--James' note: I need to add a trigger if time to check that achievements match games and that the userToGameID 
+--corresponds to the right user + game! Corrected above after modifications to UserToGame dummy data 
+--(affects question query tests).
 
 /* Insert a few obscene words (for question 8) */
 INSERT INTO RudeWord

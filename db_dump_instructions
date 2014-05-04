@@ -1,0 +1,22 @@
+From the command line/system shell and not within the mysql shell use the following commands:
+
+-The following example command produces a back up of all mysql tables, their data, and triggers, but not procedures:
+ --> mysqldump -u james mydb > mydb_bu.sql
+
+-To include procedures and functions add '--routines' to the arguments:
+mysqldump -u james --routines mydb > mydb_bu_prc.sql
+
+-Note: instead of '-u james' you may have to use '-u root -p' ('-p' for root password)
+
+-To back up only triggers/procedures/functions:
+
+mysqldump --routines --no-create-info --no-data --no-create-db --skip-opt mydb > mydb_proctrigfunc_bu.sql
+
+-----------------
+
+To test restore of db output (make sure db doesn't exist already!):
+mysql -u root -p[root_password] [database_name] < dumpfilename.sql
+OR 
+mysql -u james mydb < dumpfilename.sql
+
+
