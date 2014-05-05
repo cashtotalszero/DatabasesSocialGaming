@@ -13,6 +13,7 @@ DROP TABLE Genre;
 DROP TABLE FriendRequest;
 DROP TABLE Game;
 DROP TABLE Friends;
+DROP TABLE Email;
 DROP TABLE UserPrivate;
 DROP TABLE UserPublic;
 DROP TABLE RudeWord;

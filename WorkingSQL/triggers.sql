@@ -299,6 +299,7 @@ DELIMITER ;
 /*
 QUESTION 10:
 
+Procedures to create & delete friendships.
 
 NOTE: Game invites are dealt with by the Matches relations (see question 20) 
 and are therefore not included here.
@@ -306,7 +307,7 @@ and are therefore not included here.
 Author: Alex Parrott
 */
 
-/* Procedure creates a Friendship Request via UserName */
+/* Procedure creates a Friendship Request - used to create & delete friendships */
 DROP PROCEDURE IF EXISTS CreateRequest;
 DELIMITER $$
 CREATE PROCEDURE CreateRequest(IN User VARCHAR(20),reqFriend VARCHAR(30),deleteFlag INT,emailFlag INT)
@@ -336,22 +337,7 @@ BEGIN
 END; $$
 DELIMITER ;
 
-/* Alternative procedure creates a Friendship Request via Email address
-DROP PROCEDURE IF EXISTS RequestFriendEmail;
-DELIMITER $$
-CREATE PROCEDURE RequestFriendEmail(IN User VARCHAR(20),reqEmail VARCHAR(30),deleteFlag INT)
-BEGIN
-	IF deleteFlag
-	THEN
-		INSERT INTO FriendRequest(Requester,Email,Response)
-		VALUES(User,reqEmail,'Declined');
-	ELSE
-		INSERT INTO FriendRequest(Requester,Email)
-		VALUES(User,reqEmail);
-	END IF;
-END; $$
-DELIMITER ;
-*/
+/* Procedure processes all FriendRequests */
 DROP PROCEDURE IF EXISTS ProcessRequest;
 DELIMITER $$
 CREATE PROCEDURE ProcessRequest(IN reqID INT)
@@ -373,7 +359,7 @@ BEGIN
 	THEN
 		SET Friend2 = (
 			SELECT UserName
-			FROM UserPrivate
+			FROM Email
 			WHERE Email = (
 				SELECT Email
 				FROM FriendRequest
@@ -787,7 +773,7 @@ BEGIN
 	/* Cursor query start */
 		SELECT query1.GameTitle, User_A, User_A_Points, User_B, User_B_Points
 		FROM
-				(SELECT ID, User_A, GameTitle, SUM(PointValue) AS User_A_Points	--query1
+				(SELECT ID, User_A, GameTitle, SUM(PointValue) AS User_A_Points	/* query1 */
 				 FROM
 					(SELECT ID, User_A, GameTitle, achievementID 
 					 FROM
@@ -803,7 +789,7 @@ BEGIN
 				 GROUP BY ID
 				 ORDER BY x.achievementID DESC) query1 
 			LEFT OUTER JOIN
-				(SELECT ID, User_B, GameTitle, SUM(PointValue) AS User_B_Points	--query2
+				(SELECT ID, User_B, GameTitle, SUM(PointValue) AS User_B_Points	/* query2 */
 				FROM
 					(SELECT ID, User_B, GameTitle, achievementID 
 					 FROM
@@ -824,7 +810,7 @@ BEGIN
 		
 		SELECT query2.GameTitle, User_A, User_A_Points, User_B, User_B_Points
 		FROM
-				(SELECT ID, User_A, GameTitle, SUM(PointValue) AS User_A_Points	--query1
+				(SELECT ID, User_A, GameTitle, SUM(PointValue) AS User_A_Points	/* query1 */
 				 FROM
 					(SELECT ID, User_A, GameTitle, achievementID 
 					 FROM
@@ -840,7 +826,7 @@ BEGIN
 				 GROUP BY ID
 				 ORDER BY x.achievementID DESC) query1 
 			RIGHT OUTER JOIN
-				(SELECT ID, User_B, GameTitle, SUM(PointValue) AS User_B_Points	--query2
+				(SELECT ID, User_B, GameTitle, SUM(PointValue) AS User_B_Points	/* query2 */
 				FROM
 					(SELECT ID, User_B, GameTitle, achievementID 
 					 FROM
@@ -877,7 +863,7 @@ BEGIN
 	   	END IF;
 	   	/* Check if game owned by both users */
 	   	IF ((usrA IS NOT NULL) AND (usrB IS NOT NULL)) THEN
-	   		SET @owned = 1; --Set flag for sort order (1 = owned by both users)
+	   		SET @owned = 1; /*Set flag for sort order (1 = owned by both users) */
 			/* Check if a user has null points for an owned game and set to 0 */
 			IF (usrpointsA IS NULL) THEN
 				SET usrpointsA = 0;

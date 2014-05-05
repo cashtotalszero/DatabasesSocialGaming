@@ -34,34 +34,66 @@ INSERT INTO UserPublic
 
 /* Dummy values for UserPrivate */
 INSERT INTO UserPrivate 
-	VALUES('AlexParrott','12343','Alex','Parrott','Alex@Parrott.com'
+	VALUES('AlexParrott','12343','Alex','Parrott'
 );
 INSERT INTO UserPrivate 
-	VALUES('JamesHamblion','JAMES!','James','Hamblion','James@Hamblion.com'
+	VALUES('JamesHamblion','JAMES!','James','Hamblion'
 );
 INSERT INTO UserPrivate 
-	VALUES('WillWoodhead','password','Will','Woodhead','Will@Woodhead.com'
+	VALUES('WillWoodhead','password','Will','Woodhead'
 );
 INSERT INTO UserPrivate 
-	VALUES('ScarlettJo','???','Scarlett','Johansson','Scarlett@Hollywoodbabes.com'
+	VALUES('ScarlettJo','???','Scarlett','Johansson'
 );
 INSERT INTO UserPrivate 
-	VALUES('AliceInWonderland','maaaaaad75','Alice','Alice','Alice@Wonderland.com'
+	VALUES('AliceInWonderland','maaaaaad75','Alice','Alice'
 );
 INSERT INTO UserPrivate 
-	VALUES('BobHope','12343','Bob','Hope','bob@hope.com'
+	VALUES('BobHope','12343','Bob','Hope'
 );
 INSERT INTO UserPrivate 
-	VALUES('BarackObama','JAMES!','Barack','Obama','barack@obama.com'
+	VALUES('BarackObama','JAMES!','Barack','Obama'
 );
 INSERT INTO UserPrivate 
-	VALUES('DavidCameron','password','Dave','Cameron','dave@cameron.com'
+	VALUES('DavidCameron','password','Dave','Cameron'
 );
 INSERT INTO UserPrivate 
-	VALUES('GeorgeClooney','???','George','Clooney','george@clooney.com'
+	VALUES('GeorgeClooney','???','George','Clooney'
 );
 INSERT INTO UserPrivate 
-	VALUES('BradPitt','maaaaaad75','Brad','Pitt','Brad@Pitt.com'
+	VALUES('BradPitt','maaaaaad75','Brad','Pitt'
+);
+
+/* Dummy Email addresses */
+INSERT INTO Email 
+	VALUES('AlexParrott','Alex@Parrott.com'
+);
+INSERT INTO Email
+	VALUES('JamesHamblion','James@Hamblion.com'
+);
+INSERT INTO Email 
+	VALUES('WillWoodhead','Will@Woodhead.com'
+);
+INSERT INTO Email 
+	VALUES('ScarlettJo','Scarlett@Hollywoodbabes.com'
+);
+INSERT INTO Email 
+	VALUES('AliceInWonderland','Alice@Wonderland.com'
+);
+INSERT INTO Email 
+	VALUES('BobHope','bob@hope.com'
+);
+INSERT INTO Email 
+	VALUES('BarackObama','barack@obama.com'
+);
+INSERT INTO Email 
+	VALUES('DavidCameron','dave@cameron.com'
+);
+INSERT INTO Email 
+	VALUES('GeorgeClooney','george@clooney.com'
+);
+INSERT INTO Email 
+	VALUES('BradPitt','Brad@Pitt.com'
 );
 
 /* FRIENDS DUMMY DATA TO BE ADDED ONCE TRIGGER IS FINAL */
@@ -352,9 +384,9 @@ INSERT INTO AchievementToUserToGame
 	VALUES (6, 8, '2013-12-13');
 INSERT INTO AchievementToUserToGame
 	VALUES (7, 8, '2014-02-12');
---James' note: I need to add a trigger if time to check that achievements match games and that the userToGameID 
+/*James' note: I need to add a trigger if time to check that achievements match games and that the userToGameID 
 --corresponds to the right user + game! Corrected above after modifications to UserToGame dummy data 
---(affects question query tests).
+--(affects question query tests).*/
 
 /* Insert a few obscene words (for question 8) */
 INSERT INTO RudeWord

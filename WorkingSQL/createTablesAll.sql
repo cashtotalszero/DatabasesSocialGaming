@@ -18,11 +18,21 @@ CREATE TABLE UserPrivate(
 	Password VARCHAR(20) NOT NULL,
 	FirstName VARCHAR(20) NOT NULL,
 	LastName VARCHAR(20) NOT NULL,
-	Email VARCHAR(30) NOT NULL UNIQUE,
 
 	CONSTRAINT pkUserName
 		PRIMARY KEY(UserName),
 	CONSTRAINT fkUserName
+		FOREIGN Key(UserName)
+		REFERENCES UserPublic(UserName)
+);
+
+CREATE TABLE Email(
+	UserName VARCHAR(20) NOT NULL,
+	Email VARCHAR(30) NOT NULL UNIQUE,
+
+	CONSTRAINT pkUserNameEmail
+		PRIMARY KEY(UserName),
+	CONSTRAINT fkUserNameEmail
 		FOREIGN Key(UserName)
 		REFERENCES UserPublic(UserName)
 );
@@ -131,9 +141,7 @@ CREATE TABLE FriendRequest(
 	Requestee VARCHAR(20) DEFAULT NULL,
 	Email VARCHAR(30) DEFAULT NULL,
 	Response ENUM('Pending','Accepted','Declined','Completed') NOT NULL DEFAULT'Pending',
-	/*GameInvite INT DEFAULT NULL,
-	InviteResponse ENUM('Accepted','Denied','Pending') NOT NULL DEFAULT'Pending',
-	*/
+	
 	CONSTRAINT pkFriendReq
 		PRIMARY KEY(RequestID),
 	CONSTRAINT fkRequester
@@ -144,7 +152,7 @@ CREATE TABLE FriendRequest(
 		REFERENCES UserPrivate(UserName),
 	CONSTRAINT fkReqEmail
 		FOREIGN Key(Email)
-		REFERENCES UserPrivate(Email)
+		REFERENCES Email(Email)
 );
 
 /* Leaderboards */ 
