@@ -14,15 +14,15 @@ QUESTION 1:
 Given a game, list all the users who own that game 
 
 Example query - looks up game with GameID 4:
-CALL Question1(4);
+CALL ListGameOwners(4);
 
 Author: Alex Parrott
 */
-DROP PROCEDURE IF EXISTS Question1;
+DROP PROCEDURE IF EXISTS ListGameOwners;
 DELIMITER $$
-CREATE PROCEDURE Question1(IN gameVar INT)
+CREATE PROCEDURE ListGameOwners(IN gameVar INT)
 BEGIN
-	SELECT UserPublic.UserName 
+	SELECT UserPublic.UserName AS Owners 
 	FROM Game,UserPublic,UserToGame
 	WHERE UserPublic.UserName=UserToGame.UserName 
 	AND Game.GameID=UserToGame.GameID 
