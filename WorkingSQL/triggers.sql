@@ -435,8 +435,10 @@ BEGIN
 			SELECT Friend 
 			FROM Friends
 			AS friendtemp 
-			WHERE AccHolder = UserN)
-		); 
+			WHERE AccHolder = UserN
+		 UNION SELECT UserN 
+		)
+	);
 
 	IF ((SELECT SortOrder FROM Game WHERE GameID=GID) = 'asc') 
 	THEN
