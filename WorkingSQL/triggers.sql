@@ -79,9 +79,9 @@ See question4.sql for an example query.
 
 Author: Will Woodhead
 */
-DROP PROCEDURE IF EXISTS Question4;
+DROP PROCEDURE IF EXISTS RankLeaderboards;
 DELIMITER $$
-CREATE PROCEDURE Question4(User VARCHAR(30), GID INT)
+CREATE PROCEDURE RankLeaderboards(User VARCHAR(30), GID INT)
 BEGIN 
 	SET @rank=0;
 	/* @count is the number of users who have registered a score in a particular game */
@@ -130,9 +130,9 @@ See question5.sql for example query.
 
 Author: Will Woodhead
 */
-DROP PROCEDURE if exists Question5;
+DROP PROCEDURE if exists TopTens;
 DELIMITER $$
-CREATE PROCEDURE Question5()
+CREATE PROCEDURE TopTens()
 BEGIN 
 	SET @row:=0;
 	SET @prev:=null;
