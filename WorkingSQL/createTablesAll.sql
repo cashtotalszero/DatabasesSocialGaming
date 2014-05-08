@@ -45,7 +45,6 @@ CREATE TABLE Game(
 	Name VARCHAR(30) NOT NULL,
 	AverageRating FLOAT DEFAULT NULL,
 	NoOfRatings INT DEFAULT NULL,
-	/*OverallRank INT UNIQUE DEFAULT NULL,*/
 	Publisher VARCHAR(20) NOT NULL,
 	ScoreFormat VARCHAR(20) NOT NULL DEFAULT 'points',
 	SortOrder ENUM('asc','desc') NOT NULL DEFAULT 'desc',

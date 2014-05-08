@@ -1,3 +1,7 @@
+/*
+This file removes all tables from the database in the correct order (avoiding
+any foreign key restrictions).
+*/
 DROP TABLE MatchRequest;
 DROP TABLE MatchToUserToGame;
 DROP TABLE Matches;

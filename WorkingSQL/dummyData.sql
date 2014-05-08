@@ -1,3 +1,7 @@
+/*
+This file creates example dummy data for the database.
+*/
+
 /* USER INFORMATION */
 
 /* Dummy values for UserPublic */

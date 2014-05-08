@@ -1,11 +1,11 @@
+/* 
+PROCEDURES, FUNCTIONS & TRIGGERS
 
-/* PROCEDURES, FUNCTIONS & TRIGGERS */
-
-/*
-Listed first are the relevant procedures and functions for the specified coursework
+Included are the relevant procedures and functions for the specified coursework
 questions. Where appropriate triggers to activate them are listed afterward.
 
-All questions have been separated out into their own .sql files for clarity.
+Examples of all procedure and function calls and full explanations of their 
+purpose are provided in the client report.
 */
 
 /* 
@@ -13,15 +13,13 @@ QUESTION 1:
 
 Given a game, list all the users who own that game 
 
-Example query - looks up game with GameID 4:
-CALL ListGameOwners(4);
-
 Author: Alex Parrott
 */
 DROP PROCEDURE IF EXISTS ListGameOwners;
 DELIMITER $$
 CREATE PROCEDURE ListGameOwners(IN gameVar INT)
 BEGIN
+	/* Looks up the Game with the ID provided as parameter */
 	SELECT UserPublic.UserName AS Owners 
 	FROM Game,UserPublic,UserToGame
 	WHERE UserPublic.UserName=UserToGame.UserName 
@@ -75,7 +73,6 @@ QUESTION 4:
 
 Given a game and user this procedure displays the user's score, rank on the 
 game's leaderboard and their relative position to the average score. 
-See question4.sql for an example query.
 
 Author: Will Woodhead
 */
@@ -105,7 +102,11 @@ BEGIN
 				FROM UserToGame 
 				WHERE GameID = GID)
 			ORDER BY Score ASC
-		) AS temp WHERE UserToGameID = (SELECT ID FROM UserToGame WHERE Username = User AND GameID = GID )
+		) AS temp WHERE UserToGameID = (
+				SELECT ID 
+				FROM UserToGame 
+				WHERE Username = User 
+				AND GameID = GID )
 		ORDER BY BestScore ASC LIMIT 1;
 	ELSE 
 		SELECT r AS rank, topXP AS top_x_percent, scor AS BestScore FROM (
@@ -116,7 +117,11 @@ BEGIN
 				FROM UserToGame 
 				WHERE GameID = GID)
 			ORDER BY Score DESC
-		) AS temp WHERE UserToGameID = (SELECT ID FROM UserToGame WHERE Username = User AND GameID = GID  ) 
+		) AS temp WHERE UserToGameID = (
+				SELECT ID 
+				FROM UserToGame 
+				WHERE Username = User 
+				AND GameID = GID  ) 
 		ORDER BY BestScore DESC LIMIT 1;
 	END IF;
 END; $$
@@ -126,7 +131,6 @@ DELIMITER ;
 QUESTION 5:
 
 This procedure creates a list of the top 10 rated games in each genre/category.
-See question5.sql for example query.
 
 Author: Will Woodhead
 */
@@ -164,7 +168,7 @@ This function is called by a triggers:
 - Before any UPDATE or INSERT on the UserToGame relation (which holds the LastScore attribute) 
 
 Author: Alex Parrott
- */
+*/
 DROP FUNCTION IF EXISTS CatchCheaters;
 DELIMITER $$
 CREATE FUNCTION CatchCheaters(game INT,score INT)
@@ -210,6 +214,10 @@ QUESTION 7:
 
 Procedure adds daily and weekly leaderboards for each game showing the best scores
 acheived.
+
+SEE Game_after_insert TRIGGER below.
+
+Author: Will Woodhead
 */
 
 /*
@@ -221,11 +229,8 @@ A return of true indicates an illegal username, and false if it's acceptable.
 This function is called by a trigger:
 - Before INSERT on UserPublic (which holds user names)
 
-See question8.sql for an example query.
-
 Author: James Hamblion
 */
-
 DROP FUNCTION IF EXISTS isUserNameRude;
 DELIMITER $$
 CREATE FUNCTION isUserNameRude(usrname VARCHAR(50))
@@ -266,10 +271,7 @@ QUESTION 9:
 Procedure creates a 'Hot List' showing 10 games which have been played most
 often in the last week.
 
-See question9.sql for an example query.
-
 Author: Will Woodhead
-
 */
 DROP PROCEDURE IF EXISTS Hotlist;
 DELIMITER $$
@@ -405,8 +407,6 @@ QUESTION 11:
 When given a user and a game this procedure shows a leaderboard which lists 
 just the user and their friends. 
 
-See question11.sql for an example query.
-
 Author: Will Woodhead
 */
 DROP PROCEDURE IF EXISTS GetFriendsLeaderboard;
@@ -461,11 +461,7 @@ When given a UserName (passed as a parameter), this procedure lists all the User
 online friends. All offline friends are also listed with their last login time 
 and the name of the last game they played.
 
-An exmaple query (lists all of AlexParrott's friends): 
-CALL ShowFriends('AlexParrott');
-
 Author: Alex Parrott
-
 */
 DROP PROCEDURE IF EXISTS ShowFriends;
 DELIMITER $$
@@ -523,10 +519,7 @@ PROCEDURE to show achievement status for a user in a specific game.
 -0 of 1 achievements (0 points)
 -If game not owned by user: 'Error: game not owned by user!'
 
-See question13.sql for test examples and example queries.
-
 Author: James Hamblion
-
 */
 DROP PROCEDURE IF EXISTS AchievementsForUserGame;
 DELIMITER $$
@@ -667,8 +660,6 @@ QUESTION 15:
 PROCEDURE shows achievements for a game that a user has earnt, and those that they have not
 (providing they are not hidden i.e. hiddenFlag = FALSE).
 
-See question15.sql for example query and testing.
-
 Author: James Hamblion
 */
 DROP PROCEDURE IF EXISTS ListUserGameAchievements;
@@ -752,8 +743,6 @@ QUESTION 16:
 
 List the games a user and their friend own, their achievement points per game.
 At end of list add all games + achievement points owned by each user that the other does not own.
-
-See question16.sql for example query and testing.
 
 Author: James Hamblion
 */
@@ -898,7 +887,7 @@ DELIMITER ;
 /*
 QUESTION 17:
 
-See question17.sql for example query.
+Creates leaderboards.
 
 Author: Will Woodhead
 
@@ -983,9 +972,7 @@ DELIMITER ;
 QUESTION 18:
 
 Suggests friends to any user which are not already friends and have more than one 
-friend or game in common with the specified user:
-
-CALL SuggestFriends('AlexParrott');
+friend or game in common with the specified user.
 
 Author: Alex Parrott 
 */
@@ -1085,7 +1072,13 @@ END; $$
 DELIMITER ;
 
 
-/* Question 20 ################################################# */
+/* Question 20 
+
+Allows for users to invite each other to play games and have matches against 
+each other.
+
+Author: Will Woodhead
+*/
 
 DROP PROCEDURE if exists CreateMatch;
 DELIMITER //
