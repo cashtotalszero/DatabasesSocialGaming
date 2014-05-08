@@ -19,4 +19,19 @@ mysql -u root -p[root_password] [database_name] < dumpfilename.sql
 OR 
 mysql -u james mydb < dumpfilename.sql
 
+e.g. to restore a database first create a new empty db
+1. From within mysql as root or user with privileges enter: 
+	CREATE DATABASE restdbtest;
+2. From shell (ensure file in working directory/path) enter:
+	mysql -u root -p restdbtest < sgndb_dump.sql
+-----------------
+MYSQL command line - read in text file (must be in path of working directory):
+
+shell> mysql db_name < text_file
+
+OR 
+
+mysql> source file_name
+mysql> \. file_name
+
 
