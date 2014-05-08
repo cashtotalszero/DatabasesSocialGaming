@@ -1,8 +1,9 @@
-/* QUESTION 14 */ --NOT COMPLETE: Awaiting Friend table finalisation!
+/* QUESTION 14 */
 --Procedure call tests
 CALL ShowStatusScreen('AlexParrott');
 CALL ShowStatusScreen('JamesHamblion');
 CALL ShowStatusScreen('WillWoodhead');
+CALL ShowStatusScreen('Al'); --nothing happens. Correct.
 
 /* PROCEDURE to show a users status screen */
 DROP PROCEDURE IF EXISTS ShowStatusScreen;
@@ -10,7 +11,7 @@ DELIMITER //
 CREATE PROCEDURE ShowStatusScreen(usrname VARCHAR(50))
 BEGIN
 	--User not found handler (skips query code if no usrname exists in database)
-	IF ((SELECT COUNT(UserName) FROM UserPublic u WHERE u.UserName = usrname) IS NOT NULL) THEN
+	IF ((SELECT COUNT(UserName) FROM UserPublic u WHERE u.UserName = usrname) != 0) THEN
 		--User status line
 		SET @status = (
 			SELECT UserStatus FROM UserPublic u
@@ -29,12 +30,12 @@ BEGIN
 				 AND a.achievementID = b.achievementID
 			);
 		IF (@numPoints IS NULL) THEN SET @numPoints = 0; END IF; --prevents null output
-		--Number of friends of user (TBC)
-		SET @numFriends = 4;
-		--SET @numFriends = (
-			--SELECT COUNT(Friend) FROM 
-			--WHERE 
-			--);
+		/* Number of friends of user */
+		SET @numFriends = (
+			SELECT COUNT(Friend) FROM Friends f
+			WHERE f.AccHolder = usrname
+		);
+
 		IF (@numFriends IS NULL) THEN SET @numFriends = 0; END IF; --prevents null output
 		--create status screen table, insert values, print and then drop the the Status_Screen table
 		CREATE TABLE Status_Screen (Username VARCHAR(20), Status_Line VARCHAR(100), Number_of_Games_Owned INT, 

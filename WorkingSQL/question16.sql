@@ -9,19 +9,19 @@ CALL CompListGameAchievFriend('AlexParrott', 'WillWoodhead');
 --Game_Title		Your_Achievement_Points	Achievement_Points_of_WillWoodhead
 --GTA V			10					0
 --FIFA 14			0					50
---Angry Birds		30					<null>
---Crash Bandicoot	<null>				<null>
---Bike Runner		<null>				<null>
---mission Impossible<null>				<null>
+--Angry Birds		30					
+--Crash Bandicoot						0
+--Bike Runner							0
+--mission Impossible					0
 DROP PROCEDURE IF EXISTS CompListGameAchievFriend;
-DELIMITER //
+--DELIMITER //
 CREATE PROCEDURE CompListGameAchievFriend(usrname VARCHAR(50), frndusrname VARCHAR(50))
 BEGIN
 	DECLARE ttl VARCHAR(30);
 	DECLARE usrA VARCHAR(20);
-	DECLARE usrpointsA INT;
+	DECLARE usrpointsA VARCHAR(20);
 	DECLARE usrB VARCHAR(20);
-	DECLARE usrpointsB INT;
+	DECLARE usrpointsB VARCHAR(20);
 	DECLARE done INT DEFAULT FALSE;
 	--Cursor for games and achiev of usrname
 	DECLARE cur CURSOR FOR
@@ -103,8 +103,8 @@ BEGIN
 	--Build statement for the temporary create comparison table screen
 	--with procedure input variables in column/attribute names
 	SET @userAchPoints = CONCAT('CREATE TABLE Compare_List (Game_Title VARCHAR(30), ', 
-					 'Your_Achievement_Points INT, ',
-					 'Achievement_Points_of_', frndusrname, ' INT, notOwned INT)');
+					 'Your_Achievement_Points VARCHAR(20), ',
+					 'Achievement_Points_of_', frndusrname, ' VARCHAR(20), notOwned INT)');
 	--Create user/friend game and achievements comparison table
 	PREPARE stmnt FROM @userAchPoints;
 	EXECUTE stmnt;
@@ -121,13 +121,21 @@ BEGIN
 	   		SET @owned = 1; --Set flag for sort order (1 = owned by both users)
 			--Check if a user has null points for an owned game and set to 0
 			IF (usrpointsA IS NULL) THEN
-				SET usrpointsA = 0;
+				SET usrpointsA = '0';
 			ELSEIF (usrpointsB IS NULL) THEN
-				SET usrpointsB = 0;
+				SET usrpointsB = '0';
 			END IF;
-		ELSE SET @owned = 0; --Set flag for sort order (0 = not owned by one user)
+		ELSE --only owned by one user
+			SET @owned = 0; --Set flag for sort order (0 = not owned by one user)
+			IF (usrA IS NULL AND usrB IS NOT NULL) THEN --owned by usrB not usrA
+				SET usrpointsA = '';
+				SET usrpointsB = '0';
+			ELSEIF (usrA IS NOT NULL AND usrB IS NULL) THEN --owned by usrA not usrB
+				SET usrpointsA = '0';
+				SET usrpointsB = '';
+			END IF;
 	   	END IF;
-	   	
+	   	--Insert results into temporary output table
 	   	INSERT INTO Compare_List 
 	   		VALUES (ttl, usrpointsA, usrpointsB, @owned);
 	END LOOP;
@@ -138,7 +146,6 @@ BEGIN
 	PREPARE stmnt FROM @resultStr;
 	EXECUTE stmnt;
 	DEALLOCATE PREPARE stmnt;
-	--SELECT * FROM Compare_List ORDER BY notOwned DESC;
 	DROP TABLE Compare_List;
 END //
 DELIMITER ;

@@ -575,9 +575,9 @@ BEGIN
 		THEN 
 			SET pointVal = 0; 
 		END IF; /*prevents null output*/
-		SELECT CONCAT(earntAchiev,' of ',totalAchiev,' achievements ','(',pointVal,' points', ')');
+		SELECT CONCAT(earntAchiev,' of ',totalAchiev,' achievements ','(',pointVal,' points', ')') AS 'Your_Achievements';
 	ELSE
-		SELECT 'Error: game not owned by user!';
+		SELECT 'Error: game not owned by user!' AS 'Your_Achievements';
 	END IF;
 END; $$
 DELIMITER ;
@@ -600,7 +600,7 @@ BEGIN
 		(SELECT COUNT(UserName) 
 		FROM UserPublic u 
 		WHERE u.UserName = usrname) 
-		IS NOT NULL) 
+		!= 0)
 	THEN
 		/* User status line */
 		SET @status = (
@@ -632,14 +632,11 @@ BEGIN
 		THEN 
 			SET @numPoints = 0; 
 		END IF; /* prevents null output */
-		/* Cumber of friends of user (TBC) */
-		SET @numFriends = 4;
-		/*
+		/* Number of friends of user */
 		SET @numFriends = (
-			SELECT COUNT(Friend) FROM 
-			WHERE 
-			);
-		*/
+			SELECT COUNT(Friend) FROM Friends f
+			WHERE f.AccHolder = usrname
+		);
 		IF (@numFriends IS NULL) 
 		THEN 
 			SET @numFriends = 0; 
@@ -761,21 +758,21 @@ See question16.sql for example query and testing.
 Author: James Hamblion
 */
 DROP PROCEDURE IF EXISTS CompListGameAchievFriend;
-DELIMITER //
+DELIMITER $$
 CREATE PROCEDURE CompListGameAchievFriend(usrname VARCHAR(50), frndusrname VARCHAR(50))
 BEGIN
 	DECLARE ttl VARCHAR(30);
 	DECLARE usrA VARCHAR(20);
-	DECLARE usrpointsA INT;
+	DECLARE usrpointsA VARCHAR(20);
 	DECLARE usrB VARCHAR(20);
-	DECLARE usrpointsB INT;
+	DECLARE usrpointsB VARCHAR(20);
 	DECLARE done INT DEFAULT FALSE;
-	/* Cursor for games and achiev of usrname */
+	/*Cursor for games and achiev of usrname*/
 	DECLARE cur CURSOR FOR
-	/* Cursor query start */
+	/*Cursor query start*/
 		SELECT query1.GameTitle, User_A, User_A_Points, User_B, User_B_Points
 		FROM
-				(SELECT ID, User_A, GameTitle, SUM(PointValue) AS User_A_Points	/* query1 */
+				(SELECT ID, User_A, GameTitle, SUM(PointValue) AS User_A_Points
 				 FROM
 					(SELECT ID, User_A, GameTitle, achievementID 
 					 FROM
@@ -791,7 +788,7 @@ BEGIN
 				 GROUP BY ID
 				 ORDER BY x.achievementID DESC) query1 
 			LEFT OUTER JOIN
-				(SELECT ID, User_B, GameTitle, SUM(PointValue) AS User_B_Points	/* query2 */
+				(SELECT ID, User_B, GameTitle, SUM(PointValue) AS User_B_Points
 				FROM
 					(SELECT ID, User_B, GameTitle, achievementID 
 					 FROM
@@ -812,7 +809,7 @@ BEGIN
 		
 		SELECT query2.GameTitle, User_A, User_A_Points, User_B, User_B_Points
 		FROM
-				(SELECT ID, User_A, GameTitle, SUM(PointValue) AS User_A_Points	/* query1 */
+				(SELECT ID, User_A, GameTitle, SUM(PointValue) AS User_A_Points
 				 FROM
 					(SELECT ID, User_A, GameTitle, achievementID 
 					 FROM
@@ -828,7 +825,7 @@ BEGIN
 				 GROUP BY ID
 				 ORDER BY x.achievementID DESC) query1 
 			RIGHT OUTER JOIN
-				(SELECT ID, User_B, GameTitle, SUM(PointValue) AS User_B_Points	/* query2 */
+				(SELECT ID, User_B, GameTitle, SUM(PointValue) AS User_B_Points
 				FROM
 					(SELECT ID, User_B, GameTitle, achievementID 
 					 FROM
@@ -848,45 +845,53 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
 	/*Build statement for the temporary create comparison table screen
-	with procedure input variables in column/attribute names */
+	with procedure input variables in column/attribute names*/
 	SET @userAchPoints = CONCAT('CREATE TABLE Compare_List (Game_Title VARCHAR(30), ', 
-					 'Your_Achievement_Points INT, ',
-					 'Achievement_Points_of_', frndusrname, ' INT, notOwned INT)');
-	/* Create user/friend game and achievements comparison table */
+					 'Your_Achievement_Points VARCHAR(20), ',
+					 'Achievement_Points_of_', frndusrname, ' VARCHAR(20), notOwned INT)');
+	/*Create user/friend game and achievements comparison table*/
 	PREPARE stmnt FROM @userAchPoints;
 	EXECUTE stmnt;
 	DEALLOCATE PREPARE stmnt;
-	/* Populate Compare_Screen temporary output table: */
+	/*Populate Compare_Screen temporary output table:*/
 	OPEN cur;
 	pop_loop: LOOP
 		FETCH cur INTO ttl, usrA, usrpointsA, usrB, usrpointsB;
 	    	IF done THEN
 			LEAVE pop_loop;
 	   	END IF;
-	   	/* Check if game owned by both users */
+	   	/*Check if game owned by both users*/
 	   	IF ((usrA IS NOT NULL) AND (usrB IS NOT NULL)) THEN
-	   		SET @owned = 1; /*Set flag for sort order (1 = owned by both users) */
-			/* Check if a user has null points for an owned game and set to 0 */
+	   		SET @owned = 1; /*Set flag for sort order (1 = owned by both users)*/
+			/*Check if a user has null points for an owned game and set to 0*/
 			IF (usrpointsA IS NULL) THEN
-				SET usrpointsA = 0;
+				SET usrpointsA = '0';
 			ELSEIF (usrpointsB IS NULL) THEN
-				SET usrpointsB = 0;
+				SET usrpointsB = '0';
 			END IF;
-		ELSE SET @owned = 0; /* Set flag for sort order (0 = not owned by one user) */
+		ELSE /*only owned by one user*/
+			SET @owned = 0; /*Set flag for sort order (0 = not owned by one user)*/
+			IF (usrA IS NULL AND usrB IS NOT NULL) THEN /*owned by usrB not usrA*/
+				SET usrpointsA = '';
+				SET usrpointsB = '0';
+			ELSEIF (usrA IS NOT NULL AND usrB IS NULL) THEN /*owned by usrA not usrB*/
+				SET usrpointsA = '0';
+				SET usrpointsB = '';
+			END IF;
 	   	END IF;
-	   	
+	   	/*Insert results into temporary output table*/
 	   	INSERT INTO Compare_List 
 	   		VALUES (ttl, usrpointsA, usrpointsB, @owned);
 	END LOOP;
 	CLOSE cur;
-	/* Display result query string */
+	/*Display result query string*/
 	SET @resultStr = CONCAT('SELECT Game_Title, Your_Achievement_Points, Achievement_Points_of_',
 						frndusrname, ' FROM Compare_List ORDER BY notOwned DESC');
 	PREPARE stmnt FROM @resultStr;
 	EXECUTE stmnt;
 	DEALLOCATE PREPARE stmnt;
 	DROP TABLE Compare_List;
-END //
+END; $$
 DELIMITER ;
 
 

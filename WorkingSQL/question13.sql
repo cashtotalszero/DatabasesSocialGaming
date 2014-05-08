@@ -1,7 +1,7 @@
 /* QUESTION 13 */
 --Procedure call tests
 CALL AchievementsForUserGame('WillWoodhead', 3); --game owned 1 of 2 achievements. OK.
-CALL AchievementsForUserGame('JamesHamblion', 2); --game not owned. O.K
+CALL AchievementsForUserGame('JamesHamblion', 6); --game not owned. O.K
 CALL AchievementsForUserGame('JamesHamblion', 1); --game owned 0 of 1 achievements. OK.
 CALL AchievementsForUserGame('AlexParrott', 1); --game owned 1 of 1 achievements. OK.
 --End testing
@@ -45,9 +45,9 @@ BEGIN
 				AND a.gameid = gameident
 			);
 		IF (pointVal IS NULL) THEN SET pointVal = 0; END IF; --prevents null output
-		SELECT CONCAT(earntAchiev, ' of ', totalAchiev, ' achievements ', '(', pointVal, ' points', ')');
+		SELECT CONCAT(earntAchiev, ' of ', totalAchiev, ' achievements ', '(', pointVal, ' points', ')') AS 'Your_Achievements';
 	ELSE
-		SELECT 'Error: game not owned by user!';
+		SELECT 'Error: game not owned by user!' AS 'Your_Achievements';
 	END IF;
-END	//
+END;	//
 DELIMITER ;
