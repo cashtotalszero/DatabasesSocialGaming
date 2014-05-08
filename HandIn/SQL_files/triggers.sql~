@@ -580,6 +580,8 @@ QUESTION 14:
 
 PROCEDURE to show a users status screen 
 
+See question14.sql for example queries and tests.
+
 Author: James Hamblion
 */
 DROP PROCEDURE IF EXISTS ShowStatusScreen;
