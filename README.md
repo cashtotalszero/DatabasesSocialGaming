@@ -1,21 +1,18 @@
 DatabasesSocialGaming
 =====================
 
+University of Bristol, Msc Computer Science Databases Group Project
+
+This is a database designed to hold information about a social gaming project
+where players can have friendships, play matches against each other and have leaderboards.
+
 NOTES:
 - SQL is written to work with MySQL
-- Latest code can be found in WorkingSQL directory
 - Scripts must be run in the following order:
   1) createTablesAll.sql
   2) triggers.sql
   3) dummyData.sql
 
-- QUESTION 1 : Query stored in question1.sql (AP)
-- QUESTION 2: This is 2 triggers. Both are currently stored in triggers.sql (AP)
-- QUESTION 3: (WW)
-- QUESTION 4:
-- QUESTION 5: (WW)
-- QUESTION 6:
-- QUESTION 7:
-- QUESTION 8: (JH)
+
 
 
